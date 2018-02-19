@@ -1,20 +1,25 @@
 <template>
   <div>
-    <el-button type="success">Success</el-button>
-    <el-progress :percentage="70"/>
-    <el-date-picker
-      v-model="dt"
-      type="datetime"
-      placeholder="Select date and time">
-    </el-date-picker>
+    <pre>{{schema}}</pre>
+    <pre>{{value}}</pre>
+    <json-editor :schema="schema" :value="value"/>
   </div>
 </template>
 
 <script>
+import {getEditorSchema} from '@/components/json-editor/schema'
 export default {
   data () {
+    const value = {
+      abgytfjyg: 9,
+      'swe"lkwh_9': {
+        x: 'yes!'
+      },
+      a1: [{ex5: false}, [null]]
+    }
     return {
-      dt: ''
+      value,
+      schema: getEditorSchema(value)
     }
   }
 }

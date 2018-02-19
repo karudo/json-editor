@@ -9,12 +9,26 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
 
+import JsonEditor from './components/json-editor'
+
+/*
+const $emit = Vue.prototype.$emit
+
+let x = 1000
+Vue.prototype.$emit = function (...args) {
+  console.log(x++, args, this)
+  $emit.apply(this, args)
+}
+*/
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI, {
   locale,
   size: 'small'
 })
+
+Vue.use(JsonEditor)
 
 /* eslint-disable no-new */
 new Vue({
