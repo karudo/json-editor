@@ -4,7 +4,7 @@
     <json-editor-props-menu
       :schema="schema"
     ></json-editor-props-menu>
-    "{{value}}"
+    <editable-span v-model="cValue"/>
   </div>
 </template>
 
