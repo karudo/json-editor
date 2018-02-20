@@ -1,8 +1,12 @@
 <template>
-  <div>
-    <pre>{{schema}}</pre>
-    <pre>{{value}}</pre>
-    <json-editor :schema="schema" :value="value"/>
+  <div class="qwe">
+    <div class="row">
+      <div><pre>{{value}}</pre></div>
+      <div><pre>{{schema}}</pre></div>
+    </div>
+    <div class="row">
+      <json-editor :schema="schema" :value="value"/>
+    </div>
   </div>
 </template>
 
@@ -24,3 +28,12 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="less">
+.qwe {
+  display: flex;
+  .row {
+    width: 50%;
+  }
+}
+</style>

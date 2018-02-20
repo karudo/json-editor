@@ -4,7 +4,7 @@
     <json-editor-props-menu
       :schema="schema"
     ></json-editor-props-menu>
-    <editable-span v-model="cValue"/>
+    <span class="value">"<editable-span v-model="cValue"/>"</span>
   </div>
 </template>
 
@@ -14,3 +14,9 @@ export default {
   mixins: [EditorMixin]
 }
 </script>
+
+<style scoped>
+.value {
+  color: green;
+}
+</style>
