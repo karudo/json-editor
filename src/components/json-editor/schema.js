@@ -1,6 +1,7 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 import _ from 'lodash'
 
+/*
 function createDisplayValue (prop = 'value') {
   return {
     get () {
@@ -92,10 +93,7 @@ const ArraySchema = Vue.extend({
     }
   }
 })
-
-const a = new NumberSchema({value: 10})
-a.displayValue = '20u'
-console.log(a)
+// */
 
 const typesCheckers = {
   number: _.isNumber,
