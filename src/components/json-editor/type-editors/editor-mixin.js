@@ -1,9 +1,25 @@
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
+import {getEmptySchema, convertValue} from '../schema'
+import {typeSymbol, rootSymbol} from '../symbols'
 export default {
   props: {
     value: null,
     schema: null
+  },
+  inject: {
+    jsonEditor: {
+      from: rootSymbol
+    }
+  },
+  provide () {
+    return {
+      [typeSymbol]: {
+        changeType: (t) => {
+          this.changeType(t)
+        }
+      }
+    }
   },
   computed: {
     cValue: {
@@ -11,7 +27,15 @@ export default {
         return this.value
       },
       set (v) {
-        this.$emit('input', v)
+        this.jsonEditor.setValue(this.schema.path, v)
+      }
+    }
+  },
+  methods: {
+    changeType (newType) {
+      if (this.schema.type !== newType) {
+        Object.assign(this.schema, getEmptySchema(newType, this.schema.path))
+        this.jsonEditor.setValue(this.schema.path, convertValue(newType, this.value))
       }
     }
   },

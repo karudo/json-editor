@@ -1,5 +1,6 @@
 // import Vue from 'vue'
 import _ from 'lodash'
+import {floatVal} from './utils'
 
 /*
 function createDisplayValue (prop = 'value') {
@@ -96,34 +97,65 @@ const ArraySchema = Vue.extend({
 // */
 
 const typesCheckers = {
-  number: _.isNumber,
-  string: _.isString,
-  object: _.isPlainObject,
-  array: _.isArray,
-  boolean: _.isBoolean,
-  null: _.isNull
+  number: {
+    checker: _.isNumber,
+    defValue: floatVal
+  },
+  string: {
+    checker: _.isString,
+    defValue (oldVal) {
+      return (_.isString(oldVal) || _.isNumber(oldVal) || _.isBoolean(oldVal)) ? `${oldVal}` : ''
+    }
+  },
+  object: {
+    checker: _.isPlainObject,
+    defValue: () => ({})
+  },
+  array: {
+    checker: _.isArray,
+    defValue: () => ([])
+  },
+  boolean: {
+    checker: _.isBoolean,
+    defValue: (oldVal) => Boolean(oldVal)
+  },
+  null: {
+    checker: _.isNull,
+    defValue: () => null
+  }
 }
 
 const types = Object.keys(typesCheckers)
 
 function getType (value) {
-  return types.find(tn => typesCheckers[tn](value))
+  return types.find(tn => typesCheckers[tn].checker(value))
 }
 
-export function getEditorSchema (json) {
-  const type = getType(json)
-  const schema = {
+export function getEmptySchema (type, path) {
+  return {
+    path,
     type,
-    error: false
+    error: false,
+    items: [],
+    props: []
   }
+}
+
+export function convertValue (type, oldValue) {
+  return typesCheckers[type].defValue(oldValue)
+}
+
+export function getEditorSchema (json, path = []) {
+  const type = getType(json)
+  const schema = getEmptySchema(type, path)
   if (type === 'array') {
-    schema.items = json.map(item => getEditorSchema(item))
+    schema.items = json.map((item, idx) => getEditorSchema(item, [...path, idx]))
   }
   if (type === 'object') {
     schema.props = _.map(json, (prop, key) => ({
       key,
-      keyError: false,
-      ...getEditorSchema(prop)
+      error: false,
+      schema: getEditorSchema(prop, [...path, key])
     }))
   }
   return schema

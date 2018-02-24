@@ -10,6 +10,7 @@
 
 <script>
 import EditorMixin from './editor-mixin'
+import {floatVal} from '../utils'
 export default {
   mixins: [EditorMixin],
   computed: {
@@ -18,8 +19,7 @@ export default {
         return `${this.cValue}`
       },
       set (v) {
-        v = parseFloat(v)
-        this.cValue = isNaN(v) ? 0 : v
+        this.cValue = floatVal(v)
       }
     }
   }

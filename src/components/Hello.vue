@@ -5,7 +5,7 @@
       <div><pre>{{schema}}</pre></div>
     </div>
     <div class="row">
-      <json-editor :schema="schema" :value="value"/>
+      <json-editor :schema="schema" v-model="value"/>
     </div>
   </div>
 </template>
