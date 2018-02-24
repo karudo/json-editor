@@ -4,11 +4,12 @@
       <slot name="name"></slot>
       <json-editor-props-menu
         :schema="schema"
-      ></json-editor-props-menu>
+      />
       [ {{schema.items.length}} ]
     </div>
     <div class="childrens">
       <component v-for="(item, idx) in schema.items"
+                 :path="[...path, idx]"
                  :key="item.key"
                  :is="`json-editor-${item.type}`"
                  :schema="item"

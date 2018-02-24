@@ -4,6 +4,7 @@ import {getEmptySchema, convertValue} from '../schema'
 import {typeSymbol, rootSymbol} from '../symbols'
 export default {
   props: {
+    path: Array,
     value: null,
     schema: null
   },
@@ -27,15 +28,15 @@ export default {
         return this.value
       },
       set (v) {
-        this.jsonEditor.setValue(this.schema.path, v)
+        this.jsonEditor.setValue(this.path, v)
       }
     }
   },
   methods: {
     changeType (newType) {
       if (this.schema.type !== newType) {
-        Object.assign(this.schema, getEmptySchema(newType, this.schema.path))
-        this.jsonEditor.setValue(this.schema.path, convertValue(newType, this.value))
+        Object.assign(this.schema, getEmptySchema(newType, this.path))
+        this.jsonEditor.setValue(this.path, convertValue(newType, this.value))
       }
     }
   },

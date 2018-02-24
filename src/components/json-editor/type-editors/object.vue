@@ -7,6 +7,7 @@
     </div>
     <div class="childrens">
       <component v-for="(prop, idx) in schema.props"
+                 :path="[...path, prop.key]"
                  :key="prop.key"
                  :is="`json-editor-${prop.schema.type}`"
                  :schema="prop.schema"

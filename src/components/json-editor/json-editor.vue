@@ -1,6 +1,7 @@
 <template>
   <div>
     <component :is="`json-editor-${schema.type}`"
+               :path="[]"
                :schema="schema"
                :value="value"
     />
@@ -9,7 +10,6 @@
 
 <script>
 import {rootSymbol} from './symbols'
-import _ from 'lodash'
 export default {
   props: ['schema', 'value'],
   provide () {

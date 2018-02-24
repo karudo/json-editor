@@ -8,13 +8,12 @@
       <span class="el-dropdown-link"><i class="el-icon-setting"></i></span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item v-for="t in types"
-                          :key="t"
-                          :command="t"
-                          :class="schema.type === t && 'selected-item'"
+                          :key="t.key"
+                          :command="t.key"
+                          :class="schema.type === t.key && 'selected-item'"
         >
-          {{t}}
+          {{t.title}}
         </el-dropdown-item>
-        <slot name="add-items"></slot>
       </el-dropdown-menu>
     </el-dropdown>
     :
@@ -24,7 +23,15 @@
 <script>
 import {typeSymbol} from './symbols'
 export default {
-  props: ['schema'],
+  props: {
+    schema: {
+      type: null
+    },
+    extraItems: {
+      type: Array,
+      default: () => []
+    }
+  },
   inject: {
     jsonEditor: {
       from: typeSymbol
@@ -32,14 +39,25 @@ export default {
   },
   data () {
     return {
-      types: [
-        'number',
-        'string',
-        'object',
-        'array',
-        'boolean',
-        'null'
-      ]
+      types: [{
+        key: 'number',
+        title: 'Number'
+      }, {
+        key: 'string',
+        title: 'String'
+      }, {
+        key: 'object',
+        title: 'Object'
+      }, {
+        key: 'array',
+        title: 'Array'
+      }, {
+        key: 'boolean',
+        title: 'Boolean'
+      }, {
+        key: 'null',
+        title: 'Null'
+      }]
     }
   },
   methods: {

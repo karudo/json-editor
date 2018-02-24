@@ -131,9 +131,8 @@ function getType (value) {
   return types.find(tn => typesCheckers[tn].checker(value))
 }
 
-export function getEmptySchema (type, path) {
+export function getEmptySchema (type) {
   return {
-    path,
     type,
     error: false,
     items: [],
@@ -145,17 +144,17 @@ export function convertValue (type, oldValue) {
   return typesCheckers[type].defValue(oldValue)
 }
 
-export function getEditorSchema (json, path = []) {
+export function getEditorSchema (json) {
   const type = getType(json)
-  const schema = getEmptySchema(type, path)
+  const schema = getEmptySchema(type)
   if (type === 'array') {
-    schema.items = json.map((item, idx) => getEditorSchema(item, [...path, idx]))
+    schema.items = json.map((item, idx) => getEditorSchema(item))
   }
   if (type === 'object') {
     schema.props = _.map(json, (prop, key) => ({
       key,
       error: false,
-      schema: getEditorSchema(prop, [...path, key])
+      schema: getEditorSchema(prop)
     }))
   }
   return schema
