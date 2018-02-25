@@ -14,6 +14,9 @@
         >
           {{t.title}}
         </el-dropdown-item>
+        <el-dropdown-item command="addItem" divided>
+          Add item
+        </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     :
@@ -21,7 +24,7 @@
 </template>
 
 <script>
-import {typeSymbol} from './symbols'
+import {symbolTypeEditor, symbolObjectEditor} from './symbols'
 export default {
   props: {
     schema: {
@@ -33,8 +36,12 @@ export default {
     }
   },
   inject: {
-    jsonEditor: {
-      from: typeSymbol
+    typeEditor: {
+      from: symbolTypeEditor
+    },
+    objectEditor: {
+      from: symbolObjectEditor,
+      default: 0
     }
   },
   data () {
@@ -62,7 +69,11 @@ export default {
   },
   methods: {
     handleCommand (cmd) {
-      this.jsonEditor.changeType(cmd)
+      if (cmd === 'addItem') {
+        this.objectEditor.addItem()
+      } else {
+        this.typeEditor.changeType(cmd)
+      }
     }
   }
 }

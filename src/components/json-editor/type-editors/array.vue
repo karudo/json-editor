@@ -2,9 +2,7 @@
   <div>
     <div>
       <slot name="name"></slot>
-      <json-editor-props-menu
-        :schema="schema"
-      />
+      <json-editor-props-menu :schema="schema"/>
       [ {{schema.items.length}} ]
     </div>
     <div class="childrens">
@@ -23,8 +21,19 @@
 
 <script>
 import EditorMixin from './editor-mixin'
+import {symbolObjectEditor} from '../symbols'
 export default {
-  mixins: [EditorMixin]
+  mixins: [EditorMixin],
+  provide () {
+    return {
+      [symbolObjectEditor]: {
+        addItem: () => {
+          this.schema.items.push(this.getEmptySchema('string'))
+          this.jsonEditor.addItem(this.path, '')
+        }
+      }
+    }
+  }
 }
 </script>
 

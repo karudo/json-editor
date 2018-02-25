@@ -148,7 +148,7 @@ export function getEditorSchema (json) {
   const type = getType(json)
   const schema = getEmptySchema(type)
   if (type === 'array') {
-    schema.items = json.map((item, idx) => getEditorSchema(item))
+    schema.items = json.map(item => getEditorSchema(item))
   }
   if (type === 'object') {
     schema.props = _.map(json, (prop, key) => ({

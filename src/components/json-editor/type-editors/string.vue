@@ -1,9 +1,7 @@
 <template>
   <div>
     <slot name="name"></slot>
-    <json-editor-props-menu
-      :schema="schema"
-    ></json-editor-props-menu>
+    <json-editor-props-menu :schema="schema"/>
     <span class="value">"<editable-span v-model="cValue"/>"</span>
   </div>
 </template>
