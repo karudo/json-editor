@@ -26,9 +26,10 @@ export default {
   methods: {
     onChangeKey (idx, newKeyName) {
       const oldKeyName = this.schema.props[idx].key
-      this.$set(this.value, newKeyName, this.value[oldKeyName])
-      this.schema.props[idx].key = newKeyName
-      this.$delete(this.value, oldKeyName)
+      if (newKeyName !== oldKeyName) {
+        this.jsonEditor.changeKey(this.path, oldKeyName, newKeyName)
+        this.schema.props[idx].key = newKeyName
+      }
     }
   }
 }
