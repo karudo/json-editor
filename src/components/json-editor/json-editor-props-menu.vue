@@ -7,15 +7,13 @@
     >
       <span class="el-dropdown-link"><i class="el-icon-setting"></i></span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item v-for="t in types"
-                          :key="t.key"
-                          :command="t.key"
-                          :class="schema.type === t.key && 'selected-item'"
+        <el-dropdown-item v-for="(t, idx) in menuItems"
+                          :key="t.title"
+                          :command="idx"
+                          :class="t.selected && 'selected-item'"
+                          :divided="t.divided"
         >
           {{t.title}}
-        </el-dropdown-item>
-        <el-dropdown-item command="addItem" divided>
-          Add item
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -24,24 +22,11 @@
 </template>
 
 <script>
-import {symbolTypeEditor, symbolObjectEditor} from './symbols'
 export default {
   props: {
-    schema: {
-      type: null
-    },
-    extraItems: {
+    menuItems: {
       type: Array,
       default: () => []
-    }
-  },
-  inject: {
-    typeEditor: {
-      from: symbolTypeEditor
-    },
-    objectEditor: {
-      from: symbolObjectEditor,
-      default: 0
     }
   },
   data () {
@@ -68,12 +53,8 @@ export default {
     }
   },
   methods: {
-    handleCommand (cmd) {
-      if (cmd === 'addItem') {
-        this.objectEditor.addItem()
-      } else {
-        this.typeEditor.changeType(cmd)
-      }
+    handleCommand (idx) {
+      this.menuItems[idx].cb()
     }
   }
 }

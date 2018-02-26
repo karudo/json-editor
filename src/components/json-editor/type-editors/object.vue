@@ -2,7 +2,7 @@
   <div>
     <div>
       <slot name="name"></slot>
-      <json-editor-props-menu :schema="schema"/>
+      <json-editor-props-menu :menu-items="menuItems"/>
       { {{schema.props.length}} }
     </div>
     <div class="childrens">

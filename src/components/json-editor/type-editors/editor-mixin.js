@@ -6,7 +6,11 @@ export default {
   props: {
     path: Array,
     value: null,
-    schema: null
+    schema: null,
+    parentMenuItems: {
+      type: Array,
+      default: () => []
+    }
   },
   inject: {
     jsonEditor: {
@@ -28,6 +32,15 @@ export default {
       set (v) {
         this.jsonEditor.setValue(this.path, v)
       }
+    },
+    menuItems () {
+      return ['number', 'string', 'array', 'object', 'boolean', 'null'].map(tn => {
+        return {
+          cb: () => this.changeType(tn),
+          title: tn,
+          selected: tn === this.schema.type
+        }
+      }).concat(this.parentMenuItems)
     }
   },
   methods: {

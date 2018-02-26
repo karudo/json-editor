@@ -131,8 +131,10 @@ function getType (value) {
   return types.find(tn => typesCheckers[tn].checker(value))
 }
 
+let num = 0
 export function getEmptySchema (type) {
   return {
+    num: num++,
     type,
     error: false,
     items: [],
