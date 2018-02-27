@@ -1,6 +1,6 @@
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
-import {getEmptySchema, convertValue} from '../schema'
+import {getSchemaForType, convertValue} from '../schema'
 import {symbolTypeEditor, symbolRoot} from '../symbols'
 export default {
   props: {
@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     getEmptySchema (newType) {
-      return getEmptySchema(newType)
+      return getSchemaForType(newType)
     },
     changeType (newType) {
       if (this.schema.type !== newType) {

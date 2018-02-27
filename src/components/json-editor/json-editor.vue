@@ -18,7 +18,6 @@ export default {
       [symbolRoot]: {
         setValue: this.setValue,
         changeKey: this.changeKey,
-        addItem: this.addItem,
         insert: this.insert,
         remove: this.remove
       }
@@ -39,10 +38,6 @@ export default {
       const obj = getByPath(this.value, path)
       this.$set(obj, newKey, obj[key])
       this.$delete(obj, key)
-    },
-    addItem (path, item) {
-      const arr = getByPath(this.value, path)
-      arr.push(item)
     },
     insert (path, idx, item) {
       const arr = getByPath(this.value, path)

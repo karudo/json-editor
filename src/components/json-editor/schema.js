@@ -1,86 +1,57 @@
-// import Vue from 'vue'
+import Vue from 'vue'
 import _ from 'lodash'
 import {floatVal} from './utils'
 
-/*
-function createDisplayValue (prop = 'value') {
-  return {
-    get () {
-      return this[prop]
-    },
-    set (v) {
-      this[prop] = v
-    }
-  }
-}
-
-const BooleanSchema = Vue.extend({
-  data () {
-    const {value = false} = this.$options
-    return {
-      type: 'boolean',
-      value: value,
-      error: undefined
-    }
-  },
-  computed: {
-    displayValue: createDisplayValue()
-  }
-})
-
-const NullSchema = Vue.extend({
-  data () {
-    return {
-      type: 'null',
-      value: null,
-      error: undefined
-    }
-  }
-})
-
-const StringSchema = Vue.extend({
-  data () {
-    const {value = ''} = this.$options
-    return {
-      type: 'string',
-      value: value,
-      error: undefined
-    }
-  },
-  computed: {
-    displayValue: createDisplayValue()
-  }
-})
-
-const NumberSchema = Vue.extend({
-  data () {
-    const {value = 0} = this.$options
-    return {
-      type: 'number',
-      value: value,
-      stringValue: `${value}`
-    }
-  },
-  computed: {
-    displayValue: createDisplayValue('stringValue'),
-    isInvalidNumber () {
-      const num = Number(this.stringValue)
-      return isNaN(num)
-    },
-    error () {
-      return this.isInvalidNumber && 'invalid number'
-    }
-  },
-  watch: {
-    stringValue (newVal) {
-      if (!this.isInvalidNumber) {
-        this.value = Number(newVal)
+const Schema = Vue.extend({
+  methods: {
+    toJSON () {
+      return {
+        type: this.type,
+        error: this.error,
+        items: this.items,
+        props: this.props
       }
     }
   }
 })
 
-const ArraySchema = Vue.extend({
+const BooleanSchema = Schema.extend({
+  data () {
+    return {
+      type: 'boolean',
+      error: undefined
+    }
+  }
+})
+
+const NullSchema = Schema.extend({
+  data () {
+    return {
+      type: 'null',
+      error: undefined
+    }
+  }
+})
+
+const StringSchema = Schema.extend({
+  data () {
+    return {
+      type: 'string',
+      error: undefined
+    }
+  }
+})
+
+const NumberSchema = Schema.extend({
+  data () {
+    return {
+      type: 'number',
+      error: undefined
+    }
+  }
+})
+
+const ArraySchema = Schema.extend({
   data () {
     const {items = []} = this.$options
     return {
@@ -94,34 +65,54 @@ const ArraySchema = Vue.extend({
     }
   }
 })
-// */
+
+const ObjectSchema = Schema.extend({
+  data () {
+    const {props = []} = this.$options
+    return {
+      type: 'object',
+      props: props
+    }
+  },
+  computed: {
+    error () {
+      return this.props.some(prop => prop.schema.error) && 'contains invalid props'
+    }
+  }
+})
 
 const typesCheckers = {
   number: {
     checker: _.isNumber,
-    defValue: floatVal
+    defValue: floatVal,
+    Class: NumberSchema
   },
   string: {
     checker: _.isString,
     defValue (oldVal) {
       return (_.isString(oldVal) || _.isNumber(oldVal) || _.isBoolean(oldVal)) ? `${oldVal}` : ''
-    }
+    },
+    Class: StringSchema
   },
   object: {
     checker: _.isPlainObject,
-    defValue: () => ({})
+    defValue: () => ({}),
+    Class: ObjectSchema
   },
   array: {
     checker: _.isArray,
-    defValue: () => ([])
+    defValue: () => ([]),
+    Class: ArraySchema
   },
   boolean: {
     checker: _.isBoolean,
-    defValue: (oldVal) => Boolean(oldVal)
+    defValue: (oldVal) => Boolean(oldVal),
+    Class: BooleanSchema
   },
   null: {
     checker: _.isNull,
-    defValue: () => null
+    defValue: () => null,
+    Class: NullSchema
   }
 }
 
@@ -132,14 +123,13 @@ function getType (value) {
 }
 
 let num = 0
-export function getEmptySchema (type) {
-  return {
-    num: num++,
-    type,
-    error: false,
-    items: [],
-    props: []
-  }
+export function getSchemaForType (type, data) {
+  return new typesCheckers[type].Class({
+    data: {
+      num: num++,
+      ...data
+    }
+  })
 }
 
 export function convertValue (type, oldValue) {
@@ -148,16 +138,24 @@ export function convertValue (type, oldValue) {
 
 export function getEditorSchema (json) {
   const type = getType(json)
-  const schema = getEmptySchema(type)
-  if (type === 'array') {
-    schema.items = json.map(item => getEditorSchema(item))
-  }
-  if (type === 'object') {
-    schema.props = _.map(json, (prop, key) => ({
-      key,
-      error: false,
-      schema: getEditorSchema(prop)
-    }))
+  let schema
+  switch (type) {
+    case 'array':
+      schema = getSchemaForType('array', {
+        items: json.map(item => getEditorSchema(item))
+      })
+      break
+    case 'object':
+      schema = getSchemaForType('object', {
+        props: _.map(json, (prop, key) => ({
+          key,
+          error: undefined,
+          schema: getEditorSchema(prop)
+        }))
+      })
+      break
+    default:
+      schema = getSchemaForType(type)
   }
   return schema
 }

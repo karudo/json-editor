@@ -35,23 +35,7 @@ export default {
       }
     }
   },
-  computed: {
-    arrayMenuItems () {
-      return [
-        ...this.menuItems,
-        {
-          divided: true,
-          title: 'Add item',
-          cb: this.addItem
-        }
-      ]
-    }
-  },
   methods: {
-    addItem () {
-      this.schema.items.push(this.getEmptySchema('string'))
-      this.jsonEditor.addItem(this.path, '')
-    },
     insert (idx) {
       this.schema.items.splice(idx, 0, this.getEmptySchema('string'))
       this.jsonEditor.insert(this.path, idx, '')

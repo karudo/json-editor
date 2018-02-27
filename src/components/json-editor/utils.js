@@ -10,6 +10,17 @@ export function getByPath (obj, path) {
   return obj
 }
 
+export function getSchemaByPath (schema, path) {
+  for (const idx of path) {
+    if (schema.type === 'array') {
+      schema = schema.items[idx]
+    } else if (schema.type === 'object') {
+      schema = schema.props[idx].schema
+    }
+  }
+  return schema
+}
+
 /*
 export function vueAssign (source, update) {
   const keys = Object.keys(update)
