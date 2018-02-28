@@ -132,6 +132,17 @@ export function getSchemaForType (type, data) {
   })
 }
 
+const SchemaWrapper = Vue.extend({
+  data () {
+
+  },
+  computed: {
+    type () {
+      return this.schema.type
+    }
+  }
+})
+
 export function convertValue (type, oldValue) {
   return typesCheckers[type].defValue(oldValue)
 }
