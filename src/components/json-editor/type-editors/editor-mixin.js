@@ -1,12 +1,13 @@
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
-import {getSchemaForType, convertValue} from '../schema'
 import {symbolTypeEditor, symbolRoot} from '../symbols'
 export default {
   props: {
     path: Array,
     value: null,
     schema: null,
+    schemaPath: Array,
+
     parentMenuItems: {
       type: Array,
       default: () => []
@@ -44,13 +45,9 @@ export default {
     }
   },
   methods: {
-    getEmptySchema (newType) {
-      return getSchemaForType(newType)
-    },
     changeType (newType) {
       if (this.schema.type !== newType) {
-        Object.assign(this.schema, this.getEmptySchema(newType))
-        this.jsonEditor.setValue(this.path, convertValue(newType, this.value))
+        this.jsonEditor.changeType(this.schemaPath, newType)
       }
     }
   },

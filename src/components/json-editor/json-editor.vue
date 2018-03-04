@@ -2,6 +2,7 @@
   <div>
     <component :is="`json-editor-${schema.type}`"
                :path="[]"
+               :schema-path="[]"
                :schema="schema"
                :value="value"
     />
@@ -10,13 +11,15 @@
 
 <script>
 import {symbolRoot} from './symbols'
-import {getByPath} from './utils'
+import {getValueByPath, getSchemaByPath, getValuePathPySchemaPath} from './utils'
+import {convertValue} from './schema'
 export default {
   props: ['schema', 'value'],
   provide () {
     return {
       [symbolRoot]: {
         setValue: this.setValue,
+        changeType: this.changeType,
         changeKey: this.changeKey,
         insert: this.insert,
         remove: this.remove
@@ -28,23 +31,39 @@ export default {
       if (path.length) {
         const [...objPath] = path
         const key = objPath.pop()
-        const obj = getByPath(this.value, objPath)
+        const obj = getValueByPath(this.value, objPath)
         this.$set(obj, key, newValue)
       } else {
         this.$emit('input', newValue)
       }
     },
+    changeType (schemaPath, newType) {
+      const schema = getSchemaByPath(this.schema, schemaPath)
+      schema.changeType(newType)
+
+      const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
+      const value = getValueByPath(this.value, valuePath)
+      this.setValue(valuePath, convertValue(newType, value))
+    },
     changeKey (path, key, newKey) {
-      const obj = getByPath(this.value, path)
+      const obj = getValueByPath(this.value, path)
       this.$set(obj, newKey, obj[key])
       this.$delete(obj, key)
     },
-    insert (path, idx, item) {
-      const arr = getByPath(this.value, path)
-      arr.splice(idx, 0, item)
+    insert (schemaPath, idx) {
+      const schema = getSchemaByPath(this.schema, schemaPath)
+      schema.callMethod('insert', idx)
+
+      const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
+      const arr = getValueByPath(this.value, valuePath)
+      arr.splice(idx, 0, '')
     },
-    remove (path, idx) {
-      const arr = getByPath(this.value, path)
+    remove (schemaPath, idx) {
+      const schema = getSchemaByPath(this.schema, schemaPath)
+      schema.callMethod('remove', idx)
+
+      const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
+      const arr = getValueByPath(this.value, valuePath)
       arr.splice(idx, 1)
     }
   }

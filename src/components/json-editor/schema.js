@@ -59,6 +59,14 @@ const ArraySchema = Schema.extend({
       items: items
     }
   },
+  methods: {
+    insert (idx, type = 'string') {
+      this.items.splice(idx, 0, createSchemaItem(type))
+    },
+    remove (idx) {
+      this.items.splice(idx, 1)
+    }
+  },
   computed: {
     error () {
       return this.items.some(item => item.error) && 'contains invalid items'
@@ -76,7 +84,7 @@ const ObjectSchema = Schema.extend({
   },
   computed: {
     error () {
-      return this.props.some(prop => prop.schema.error) && 'contains invalid props'
+      return this.props.some(prop => prop.prop.error) && 'contains invalid props'
     }
   }
 })
@@ -133,15 +141,33 @@ export function getSchemaForType (type, data) {
 }
 
 const SchemaWrapper = Vue.extend({
-  data () {
-
-  },
   computed: {
     type () {
       return this.schema.type
     }
+  },
+  methods: {
+    changeType (newType) {
+      this.schema = getSchemaForType(newType)
+    },
+    callMethod (method, ...args) {
+      return this.schema[method](...args)
+    },
+    toJSON () {
+      return {
+        type: this.type,
+        schema: this.schema
+      }
+    }
   }
 })
+
+function createSchemaItem (type, data) {
+  const schema = getSchemaForType(type, data)
+  return new SchemaWrapper({
+    data: {schema}
+  })
+}
 
 export function convertValue (type, oldValue) {
   return typesCheckers[type].defValue(oldValue)
@@ -152,21 +178,21 @@ export function getEditorSchema (json) {
   let schema
   switch (type) {
     case 'array':
-      schema = getSchemaForType('array', {
+      schema = createSchemaItem(type, {
         items: json.map(item => getEditorSchema(item))
       })
       break
     case 'object':
-      schema = getSchemaForType('object', {
+      schema = createSchemaItem(type, {
         props: _.map(json, (prop, key) => ({
           key,
           error: undefined,
-          schema: getEditorSchema(prop)
+          prop: getEditorSchema(prop)
         }))
       })
       break
     default:
-      schema = getSchemaForType(type)
+      schema = createSchemaItem(type)
   }
   return schema
 }

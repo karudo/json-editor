@@ -22,7 +22,6 @@ export default {
       a1: [{ex5: false}, [null]]
     }
     const schema = getEditorSchema(value)
-    console.log(schema)
     return {
       value,
       schema
