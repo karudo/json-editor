@@ -82,6 +82,11 @@ const ObjectSchema = Schema.extend({
       props: props
     }
   },
+  methods: {
+    changeKey (idx, key) {
+      this.props[idx].key = key
+    }
+  },
   computed: {
     error () {
       return this.props.some(prop => prop.prop.error) && 'contains invalid props'

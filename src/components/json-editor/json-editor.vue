@@ -27,6 +27,10 @@ export default {
     }
   },
   methods: {
+    getValueBySchemaPath (schemaPath) {
+      const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
+      return getValueByPath(this.value, valuePath)
+    },
     setValue (path, newValue) {
       if (path.length) {
         const [...objPath] = path
@@ -45,25 +49,27 @@ export default {
       const value = getValueByPath(this.value, valuePath)
       this.setValue(valuePath, convertValue(newType, value))
     },
-    changeKey (path, key, newKey) {
-      const obj = getValueByPath(this.value, path)
-      this.$set(obj, newKey, obj[key])
-      this.$delete(obj, key)
+    changeKey (schemaPath, idx, newKey) {
+      const schema = getSchemaByPath(this.schema, schemaPath)
+      const oldKey = schema.schema.props[idx].key
+      schema.callMethod('changeKey', idx, newKey)
+
+      const obj = this.getValueBySchemaPath(schemaPath)
+      this.$set(obj, newKey, obj[oldKey])
+      this.$delete(obj, oldKey)
     },
     insert (schemaPath, idx) {
       const schema = getSchemaByPath(this.schema, schemaPath)
       schema.callMethod('insert', idx)
 
-      const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
-      const arr = getValueByPath(this.value, valuePath)
+      const arr = this.getValueBySchemaPath(schemaPath)
       arr.splice(idx, 0, '')
     },
     remove (schemaPath, idx) {
       const schema = getSchemaByPath(this.schema, schemaPath)
       schema.callMethod('remove', idx)
 
-      const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
-      const arr = getValueByPath(this.value, valuePath)
+      const arr = this.getValueBySchemaPath(schemaPath)
       arr.splice(idx, 1)
     }
   }

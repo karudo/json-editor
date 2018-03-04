@@ -26,10 +26,9 @@ export default {
   mixins: [EditorMixin],
   methods: {
     onChangeKey (idx, newKeyName) {
-      const oldKeyName = this.schema.props[idx].key
+      const oldKeyName = this.schema.schema.props[idx].key
       if (newKeyName !== oldKeyName) {
-        this.jsonEditor.changeKey(this.path, oldKeyName, newKeyName)
-        this.schema.props[idx].key = newKeyName
+        this.jsonEditor.changeKey(this.schemaPath, idx, newKeyName)
       }
     }
   }
