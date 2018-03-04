@@ -34,7 +34,7 @@ export default {
     },
     setValue (path, newValue) {
       if (path.length) {
-        const [...objPath] = path
+        const objPath = [...path]
         const key = objPath.pop()
         const obj = getValueByPath(this.value, objPath)
         this.$set(obj, key, newValue)
