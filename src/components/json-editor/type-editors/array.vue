@@ -2,7 +2,7 @@
   <div>
     <div>
       <slot name="name"></slot>
-      <json-editor-props-menu :menu-items="menuItems"/>
+      <json-editor-props-menu :menu-items="arrayMenuItems"/>
       [ {{schema.schema.items.length}} ]
     </div>
     <div class="childrens">
@@ -25,6 +25,18 @@
 import EditorMixin from './editor-mixin'
 export default {
   mixins: [EditorMixin],
+  computed: {
+    arrayMenuItems () {
+      return [
+        ...this.menuItems,
+        {
+          divided: true,
+          title: 'Add element',
+          cb: () => this.insert(this.schema.schema.items.length)
+        }
+      ]
+    }
+  },
   methods: {
     insert (idx) {
       this.jsonEditor.insert(this.schemaPath, idx)
