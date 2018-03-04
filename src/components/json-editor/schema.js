@@ -2,6 +2,13 @@ import Vue from 'vue'
 import _ from 'lodash'
 import {floatVal} from './utils'
 
+function createObjectProp (key, prop) {
+  return {
+    key,
+    prop
+  }
+}
+
 const Schema = Vue.extend({
   methods: {
     toJSON () {
@@ -85,6 +92,9 @@ const ObjectSchema = Schema.extend({
   methods: {
     changeKey (idx, key) {
       this.props[idx].key = key
+    },
+    addProp (idx, type = 'string') {
+      this.props.splice(idx, 0, createObjectProp('', createSchemaItem(type)))
     }
   },
   computed: {
@@ -189,11 +199,7 @@ export function getEditorSchema (json) {
       break
     case 'object':
       schema = createSchemaItem(type, {
-        props: _.map(json, (prop, key) => ({
-          key,
-          error: undefined,
-          prop: getEditorSchema(prop)
-        }))
+        props: _.map(json, (prop, key) => createObjectProp(key, getEditorSchema(prop)))
       })
       break
     default:

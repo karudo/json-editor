@@ -5,7 +5,7 @@
       <json-editor-props-menu :menu-items="arrayMenuItems"/>
       [ {{schema.schema.items.length}} ]
     </div>
-    <div class="childrens">
+    <div class="children">
       <component v-for="(item, idx) in schema.schema.items"
                  :is="`json-editor-${item.type}`"
                  :key="`${idx}-${item.num}`"
@@ -62,7 +62,7 @@ export default {
 </script>
 
 <style scoped>
-.childrens {
+.children {
   padding-left: 20px;
 }
 </style>

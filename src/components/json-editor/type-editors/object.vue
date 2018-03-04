@@ -2,10 +2,10 @@
   <div>
     <div>
       <slot name="name"></slot>
-      <json-editor-props-menu :menu-items="menuItems"/>
+      <json-editor-props-menu :menu-items="objectMenuItems"/>
       { {{schema.schema.props.length}} }
     </div>
-    <div class="childrens">
+    <div class="children">
       <component v-for="(prop, idx) in schema.schema.props"
                  :path="[...path, prop.key]"
                  :schema-path="[...schemaPath, idx]"
@@ -24,6 +24,18 @@
 import EditorMixin from './editor-mixin'
 export default {
   mixins: [EditorMixin],
+  computed: {
+    objectMenuItems () {
+      return [
+        ...this.menuItems,
+        {
+          divided: true,
+          title: 'Add prop',
+          cb: () => this.jsonEditor.addProp(this.schemaPath, this.schema.schema.props.length)
+        }
+      ]
+    }
+  },
   methods: {
     onChangeKey (idx, newKeyName) {
       const oldKeyName = this.schema.schema.props[idx].key
@@ -36,7 +48,7 @@ export default {
 </script>
 
 <style scoped>
-.childrens {
+.children {
   padding-left: 20px;
 }
 </style>

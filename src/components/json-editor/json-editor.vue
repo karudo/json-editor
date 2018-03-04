@@ -21,6 +21,7 @@ export default {
         setValue: this.setValue,
         changeType: this.changeType,
         changeKey: this.changeKey,
+        addProp: this.addProp,
         insert: this.insert,
         remove: this.remove
       }
@@ -48,6 +49,13 @@ export default {
       const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
       const value = getValueByPath(this.value, valuePath)
       this.setValue(valuePath, convertValue(newType, value))
+    },
+    addProp (schemaPath, idx) {
+      const schema = getSchemaByPath(this.schema, schemaPath)
+      schema.callMethod('addProp', idx)
+
+      const obj = this.getValueBySchemaPath(schemaPath)
+      this.$set(obj, '', '')
     },
     changeKey (schemaPath, idx, newKey) {
       const schema = getSchemaByPath(this.schema, schemaPath)
