@@ -1,6 +1,7 @@
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
 import {symbolTypeEditor, symbolRoot} from '../symbols'
+const defaultTypes = ['number', 'string', 'array', 'object', 'boolean', 'null']
 export default {
   props: {
     path: Array,
@@ -35,11 +36,12 @@ export default {
       }
     },
     menuItems () {
-      return ['number', 'string', 'array', 'object', 'boolean', 'null'].map(tn => {
+      const type = this.schema.type
+      return defaultTypes.map(tn => {
         return {
           cb: () => this.changeType(tn),
           title: tn,
-          selected: tn === this.schema.type
+          selected: tn === type
         }
       }).concat(this.parentMenuItems)
     }

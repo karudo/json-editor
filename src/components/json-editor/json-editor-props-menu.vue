@@ -24,33 +24,7 @@
 <script>
 export default {
   props: {
-    menuItems: {
-      type: Array,
-      default: () => []
-    }
-  },
-  data () {
-    return {
-      types: [{
-        key: 'number',
-        title: 'Number'
-      }, {
-        key: 'string',
-        title: 'String'
-      }, {
-        key: 'object',
-        title: 'Object'
-      }, {
-        key: 'array',
-        title: 'Array'
-      }, {
-        key: 'boolean',
-        title: 'Boolean'
-      }, {
-        key: 'null',
-        title: 'Null'
-      }]
-    }
+    menuItems: Array
   },
   methods: {
     handleCommand (idx) {
