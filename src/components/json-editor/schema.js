@@ -9,20 +9,30 @@ function createObjectProp (key, prop) {
   }
 }
 
-const Schema = Vue.extend({
+const SchemaMixin = {
+  data: () => {
+    return {
+      ectx: undefined
+    }
+  },
   methods: {
+    detach () {
+      this.ectx = undefined
+      this.$destroy()
+    },
     toJSON () {
       return {
         type: this.type,
         error: this.error,
         items: this.items,
-        props: this.props
+        properties: this.properties
       }
     }
   }
-})
+}
 
-const BooleanSchema = Schema.extend({
+const BooleanSchema = Vue.extend({
+  mixins: [SchemaMixin],
   data () {
     return {
       type: 'boolean',
@@ -31,7 +41,8 @@ const BooleanSchema = Schema.extend({
   }
 })
 
-const NullSchema = Schema.extend({
+const NullSchema = Vue.extend({
+  mixins: [SchemaMixin],
   data () {
     return {
       type: 'null',
@@ -40,7 +51,8 @@ const NullSchema = Schema.extend({
   }
 })
 
-const StringSchema = Schema.extend({
+const StringSchema = Vue.extend({
+  mixins: [SchemaMixin],
   data () {
     return {
       type: 'string',
@@ -49,7 +61,8 @@ const StringSchema = Schema.extend({
   }
 })
 
-const NumberSchema = Schema.extend({
+const NumberSchema = Vue.extend({
+  mixins: [SchemaMixin],
   data () {
     return {
       type: 'number',
@@ -58,9 +71,11 @@ const NumberSchema = Schema.extend({
   }
 })
 
-const ArraySchema = Schema.extend({
+const ArraySchema = Vue.extend({
+  mixins: [SchemaMixin],
   data () {
     const {items = []} = this.$options
+    items.forEach(item => this.injectCtx(item))
     return {
       type: 'array',
       items: items
@@ -68,10 +83,21 @@ const ArraySchema = Schema.extend({
   },
   methods: {
     insert (idx, type = 'string') {
-      this.items.splice(idx, 0, createSchemaItem(type))
+      const item = createSchemaItem(type)
+      this.injectCtx(item)
+      this.items.splice(idx, 0, item)
     },
     remove (idx) {
       this.items.splice(idx, 1)
+    },
+    injectCtx (schemaItem) {
+      schemaItem.ectx = {
+        getPath: () => {
+          const index = this.items.findIndex(items => items === schemaItem)
+          return [...this.ectx.getPath(), index]
+        },
+        setValue: (...args) => this.ectx.setValue(...args)
+      }
     }
   },
   computed: {
@@ -81,25 +107,40 @@ const ArraySchema = Schema.extend({
   }
 })
 
-const ObjectSchema = Schema.extend({
+const ObjectSchema = Vue.extend({
+  mixins: [SchemaMixin],
   data () {
-    const {props = []} = this.$options
+    const {properties = []} = this.$options
     return {
       type: 'object',
-      props: props
+      properties: properties.map(({key, prop}) => {
+        this.injectCtx(prop)
+        return createObjectProp(key, prop)
+      })
     }
   },
   methods: {
     changeKey (idx, key) {
-      this.props[idx].key = key
+      this.properties[idx].key = key
     },
     addProp (idx, type = 'string') {
-      this.props.splice(idx, 0, createObjectProp('', createSchemaItem(type)))
+      const prop = createSchemaItem(type)
+      this.injectCtx(prop)
+      this.properties.splice(idx, 0, createObjectProp('', prop))
+    },
+    injectCtx (schemaItem) {
+      schemaItem.ectx = {
+        getPath: () => {
+          const index = this.properties.findIndex(prop => prop.prop === schemaItem)
+          return [...this.ectx.getPath(), index]
+        },
+        setValue: (...args) => this.ectx.setValue(...args)
+      }
     }
   },
   computed: {
     error () {
-      return this.props.some(prop => prop.prop.error) && 'contains invalid props'
+      return this.properties.some(prop => prop.prop.error) && 'contains invalid properties'
     }
   }
 })
@@ -141,17 +182,17 @@ const typesCheckers = {
 
 const types = Object.keys(typesCheckers)
 
-function getType (value) {
+function detectType (value) {
   return types.find(tn => typesCheckers[tn].checker(value))
 }
 
 let num = 0
-export function getSchemaForType (type, data) {
+export function getSchemaForType (type, options) {
   return new typesCheckers[type].Class({
     data: {
-      num: num++,
-      ...data
-    }
+      num: num++
+    },
+    ...options
   })
 }
 
@@ -177,8 +218,8 @@ const SchemaWrapper = Vue.extend({
   }
 })
 
-function createSchemaItem (type, data) {
-  const schema = getSchemaForType(type, data)
+function createSchemaItem (type, options) {
+  const schema = getSchemaForType(type, options)
   return new SchemaWrapper({
     data: {schema}
   })
@@ -189,7 +230,7 @@ export function convertValue (type, oldValue) {
 }
 
 export function getEditorSchema (json) {
-  const type = getType(json)
+  const type = detectType(json)
   let schema
   switch (type) {
     case 'array':
@@ -199,7 +240,7 @@ export function getEditorSchema (json) {
       break
     case 'object':
       schema = createSchemaItem(type, {
-        props: _.map(json, (prop, key) => createObjectProp(key, getEditorSchema(prop)))
+        properties: _.map(json, (prop, key) => ({key, prop: getEditorSchema(prop)}))
       })
       break
     default:

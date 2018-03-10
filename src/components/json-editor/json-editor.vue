@@ -47,8 +47,8 @@ export default {
       schema.changeType(newType)
 
       const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
-      const value = getValueByPath(this.value, valuePath)
-      this.setValue(valuePath, convertValue(newType, value))
+      const oldValue = getValueByPath(this.value, valuePath)
+      this.setValue(valuePath, convertValue(newType, oldValue))
     },
     addProp (schemaPath, idx) {
       const schema = getSchemaByPath(this.schema, schemaPath)
@@ -59,7 +59,7 @@ export default {
     },
     changeKey (schemaPath, idx, newKey) {
       const schema = getSchemaByPath(this.schema, schemaPath)
-      const oldKey = schema.schema.props[idx].key
+      const oldKey = schema.schema.properties[idx].key
       schema.callMethod('changeKey', idx, newKey)
 
       const obj = this.getValueBySchemaPath(schemaPath)

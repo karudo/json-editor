@@ -16,12 +16,13 @@ export default {
   data () {
     const value = {
       abgytfjyg: 9,
-      'swe"lkwh_9': {
-        x: 'yes!'
+      'swelkwh_9': {
+        xsss: 'yes!'
       },
-      a1: [{ex5: false}, [null]]
+      a1: [{ex5: false}, [null, false, 9]]
     }
     const schema = getEditorSchema(value)
+    console.log(333, schema)
     return {
       value,
       schema

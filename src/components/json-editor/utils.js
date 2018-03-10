@@ -15,7 +15,7 @@ export function getSchemaByPath (wrappedSchema, path) {
     if (wrappedSchema.type === 'array') {
       wrappedSchema = wrappedSchema.schema.items[idx]
     } else if (wrappedSchema.type === 'object') {
-      wrappedSchema = wrappedSchema.schema.props[idx].prop
+      wrappedSchema = wrappedSchema.schema.properties[idx].prop
     }
   }
   return wrappedSchema
@@ -28,7 +28,7 @@ export function getValuePathPySchemaPath (wrappedSchema, schemaPath) {
       wrappedSchema = wrappedSchema.schema.items[idx]
       path.push(idx)
     } else if (wrappedSchema.type === 'object') {
-      const prop = wrappedSchema.schema.props[idx]
+      const prop = wrappedSchema.schema.properties[idx]
       wrappedSchema = prop.prop
       path.push(prop.key)
     }
