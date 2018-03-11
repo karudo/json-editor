@@ -32,7 +32,8 @@ export default {
         return this.value
       },
       set (v) {
-        this.jsonEditor.setValue(this.path, v)
+        this.schema.typeObject.setValue(v)
+        // this.jsonEditor.setValue(this.path, v)
       }
     },
     menuItems () {

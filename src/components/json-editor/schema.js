@@ -9,6 +9,17 @@ function createObjectProp (key, prop) {
   }
 }
 
+function createCtx (object) {
+  return {
+    getPath: () => {
+      const index = this.getIdxForItem(object)
+      return [...this.ectx.getPath(), index]
+    },
+    getValue: (path) => this.ectx.getValue(path),
+    setValue: (path, value) => this.ectx.setValue(path, value)
+  }
+}
+
 const SchemaTypeMixin = {
   data: () => {
     return {
@@ -22,6 +33,13 @@ const SchemaTypeMixin = {
     destroy () {
       this.ectx = undefined
       this.$destroy()
+    },
+    injectCtx (prop) {
+      prop.setCtx(createCtx.call(this, prop))
+    },
+    setValue (val) {
+      const p = this.ectx.getPath()
+      this.ectx.setValue(p, val)
     },
     toJSON () {
       return {
@@ -85,6 +103,12 @@ const SchemaTypeArray = Vue.extend({
     }
   },
   methods: {
+    getSubItem (idx) {
+      return this.items[idx]
+    },
+    getJSONPathForSubItem (idx) {
+      return idx
+    },
     insert (idx, type = 'string') {
       const item = createSchemaItem(type)
       this.injectCtx(item)
@@ -93,14 +117,8 @@ const SchemaTypeArray = Vue.extend({
     remove (idx) {
       this.items.splice(idx, 1)
     },
-    injectCtx (schemaItem) {
-      schemaItem.setCtx({
-        getPath: () => {
-          const index = this.items.findIndex(items => items === schemaItem)
-          return [...this.ectx.getPath(), index]
-        },
-        setValue: (...args) => this.ectx.setValue(...args)
-      })
+    getIdxForItem (schemaItem) {
+      return this.items.findIndex(items => items === schemaItem)
     }
   },
   computed: {
@@ -123,6 +141,12 @@ const SchemaTypeObject = Vue.extend({
     }
   },
   methods: {
+    getSubItem (idx) {
+      return this.properties[idx].prop
+    },
+    getJSONPathForSubItem (idx) {
+      return this.properties[idx].key
+    },
     changeKey (idx, key) {
       this.properties[idx].key = key
     },
@@ -131,14 +155,8 @@ const SchemaTypeObject = Vue.extend({
       this.injectCtx(prop)
       this.properties.splice(idx, 0, createObjectProp('', prop))
     },
-    injectCtx (prop) {
-      prop.setCtx({
-        getPath: () => {
-          const index = this.properties.findIndex(prop => prop.prop === prop)
-          return [...this.ectx.getPath(), index]
-        },
-        setValue: (...args) => this.ectx.setValue(...args)
-      })
+    getIdxForItem (object) {
+      return this.properties.findIndex(prop => prop.prop === object)
     }
   },
   computed: {
@@ -207,7 +225,7 @@ const SchemaTypeWrapper = Vue.extend({
   },
   methods: {
     changeType (newType) {
-      this.schema = getTypeObjectByName(newType)
+      this.typeObject = getTypeObjectByName(newType)
     },
     callMethod (method, ...args) {
       return this.typeObject[method](...args)

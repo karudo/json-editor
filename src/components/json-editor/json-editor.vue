@@ -27,6 +27,16 @@ export default {
       }
     }
   },
+  created () {
+    this.schema.setCtx({
+      getPath: () => [],
+      getValue: this.getValueBySchemaPath,
+      setValue: (schemaPath, value) => {
+        const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
+        this.setValue(valuePath, value)
+      }
+    })
+  },
   methods: {
     getValueBySchemaPath (schemaPath) {
       const valuePath = getValuePathPySchemaPath(this.schema, schemaPath)
