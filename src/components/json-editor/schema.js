@@ -9,20 +9,23 @@ function createObjectProp (key, prop) {
   }
 }
 
-const SchemaMixin = {
+const SchemaTypeMixin = {
   data: () => {
     return {
       ectx: undefined
     }
   },
   methods: {
-    detach () {
+    setCtx (ctx) {
+      this.ectx = ctx
+    },
+    destroy () {
       this.ectx = undefined
       this.$destroy()
     },
     toJSON () {
       return {
-        type: this.type,
+        typeName: this.typeName,
         error: this.error,
         items: this.items,
         properties: this.properties
@@ -31,53 +34,53 @@ const SchemaMixin = {
   }
 }
 
-const BooleanSchema = Vue.extend({
-  mixins: [SchemaMixin],
+const SchemaTypeBoolean = Vue.extend({
+  mixins: [SchemaTypeMixin],
   data () {
     return {
-      type: 'boolean',
+      typeName: 'boolean',
       error: undefined
     }
   }
 })
 
-const NullSchema = Vue.extend({
-  mixins: [SchemaMixin],
+const SchemaTypeNull = Vue.extend({
+  mixins: [SchemaTypeMixin],
   data () {
     return {
-      type: 'null',
+      typeName: 'null',
       error: undefined
     }
   }
 })
 
-const StringSchema = Vue.extend({
-  mixins: [SchemaMixin],
+const SchemaTypeString = Vue.extend({
+  mixins: [SchemaTypeMixin],
   data () {
     return {
-      type: 'string',
+      typeName: 'string',
       error: undefined
     }
   }
 })
 
-const NumberSchema = Vue.extend({
-  mixins: [SchemaMixin],
+const SchemaTypeNumber = Vue.extend({
+  mixins: [SchemaTypeMixin],
   data () {
     return {
-      type: 'number',
+      typeName: 'number',
       error: undefined
     }
   }
 })
 
-const ArraySchema = Vue.extend({
-  mixins: [SchemaMixin],
+const SchemaTypeArray = Vue.extend({
+  mixins: [SchemaTypeMixin],
   data () {
     const {items = []} = this.$options
     items.forEach(item => this.injectCtx(item))
     return {
-      type: 'array',
+      typeName: 'array',
       items: items
     }
   },
@@ -91,13 +94,13 @@ const ArraySchema = Vue.extend({
       this.items.splice(idx, 1)
     },
     injectCtx (schemaItem) {
-      schemaItem.ectx = {
+      schemaItem.setCtx({
         getPath: () => {
           const index = this.items.findIndex(items => items === schemaItem)
           return [...this.ectx.getPath(), index]
         },
         setValue: (...args) => this.ectx.setValue(...args)
-      }
+      })
     }
   },
   computed: {
@@ -107,12 +110,12 @@ const ArraySchema = Vue.extend({
   }
 })
 
-const ObjectSchema = Vue.extend({
-  mixins: [SchemaMixin],
+const SchemaTypeObject = Vue.extend({
+  mixins: [SchemaTypeMixin],
   data () {
     const {properties = []} = this.$options
     return {
-      type: 'object',
+      typeName: 'object',
       properties: properties.map(({key, prop}) => {
         this.injectCtx(prop)
         return createObjectProp(key, prop)
@@ -128,14 +131,14 @@ const ObjectSchema = Vue.extend({
       this.injectCtx(prop)
       this.properties.splice(idx, 0, createObjectProp('', prop))
     },
-    injectCtx (schemaItem) {
-      schemaItem.ectx = {
+    injectCtx (prop) {
+      prop.setCtx({
         getPath: () => {
-          const index = this.properties.findIndex(prop => prop.prop === schemaItem)
+          const index = this.properties.findIndex(prop => prop.prop === prop)
           return [...this.ectx.getPath(), index]
         },
         setValue: (...args) => this.ectx.setValue(...args)
-      }
+      })
     }
   },
   computed: {
@@ -149,46 +152,46 @@ const typesCheckers = {
   number: {
     checker: _.isNumber,
     defValue: floatVal,
-    Class: NumberSchema
+    Class: SchemaTypeNumber
   },
   string: {
     checker: _.isString,
     defValue (oldVal) {
       return (_.isString(oldVal) || _.isNumber(oldVal) || _.isBoolean(oldVal)) ? `${oldVal}` : ''
     },
-    Class: StringSchema
+    Class: SchemaTypeString
   },
   object: {
     checker: _.isPlainObject,
     defValue: () => ({}),
-    Class: ObjectSchema
+    Class: SchemaTypeObject
   },
   array: {
     checker: _.isArray,
     defValue: () => ([]),
-    Class: ArraySchema
+    Class: SchemaTypeArray
   },
   boolean: {
     checker: _.isBoolean,
     defValue: (oldVal) => Boolean(oldVal),
-    Class: BooleanSchema
+    Class: SchemaTypeBoolean
   },
   null: {
     checker: _.isNull,
     defValue: () => null,
-    Class: NullSchema
+    Class: SchemaTypeNull
   }
 }
 
 const types = Object.keys(typesCheckers)
 
-function detectType (value) {
+function detectTypeName (value) {
   return types.find(tn => typesCheckers[tn].checker(value))
 }
 
 let num = 0
-export function getSchemaForType (type, options) {
-  return new typesCheckers[type].Class({
+export function getTypeObjectByName (typeName, options) {
+  return new typesCheckers[typeName].Class({
     data: {
       num: num++
     },
@@ -196,32 +199,35 @@ export function getSchemaForType (type, options) {
   })
 }
 
-const SchemaWrapper = Vue.extend({
+const SchemaTypeWrapper = Vue.extend({
   computed: {
-    type () {
-      return this.schema.type
+    typeName () {
+      return this.typeObject.typeName
     }
   },
   methods: {
     changeType (newType) {
-      this.schema = getSchemaForType(newType)
+      this.schema = getTypeObjectByName(newType)
     },
     callMethod (method, ...args) {
-      return this.schema[method](...args)
+      return this.typeObject[method](...args)
+    },
+    setCtx (ctx) {
+      this.typeObject.setCtx(ctx)
     },
     toJSON () {
       return {
-        type: this.type,
-        schema: this.schema
+        typeName: this.typeName,
+        typeObject: this.typeObject
       }
     }
   }
 })
 
 function createSchemaItem (type, options) {
-  const schema = getSchemaForType(type, options)
-  return new SchemaWrapper({
-    data: {schema}
+  const typeObject = getTypeObjectByName(type, options)
+  return new SchemaTypeWrapper({
+    data: {typeObject}
   })
 }
 
@@ -230,7 +236,7 @@ export function convertValue (type, oldValue) {
 }
 
 export function getEditorSchema (json) {
-  const type = detectType(json)
+  const type = detectTypeName(json)
   let schema
   switch (type) {
     case 'array':

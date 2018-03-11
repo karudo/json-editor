@@ -1,6 +1,6 @@
 <template>
   <div>
-    <component :is="`json-editor-${schema.type}`"
+    <component :is="`json-editor-${schema.typeName}`"
                :path="[]"
                :schema-path="[]"
                :schema="schema"
