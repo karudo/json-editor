@@ -10,7 +10,7 @@
   "dependencies": {
     "element-ui": "^2.2.1",
     "lodash": "^4.17.5",
-    "vue": "^2.5.14"
+    "vue": "^2.5.15"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-beta.6",
@@ -19,7 +19,7 @@
     "@vue/eslint-config-standard": "^3.0.0-beta.6",
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
-    "vue-template-compiler": "^2.5.14"
+    "vue-template-compiler": "^2.5.15"
   },
   "browserslist": [
     "> 1%",
