@@ -39,10 +39,10 @@ export default {
   },
   methods: {
     insert (idx) {
-      this.jsonEditor.insert(this.schemaPath, idx)
+      this.schema.typeObject.insert(idx)
     },
     remove (idx) {
-      this.jsonEditor.remove(this.schemaPath, idx)
+      this.schema.typeObject.remove(idx)
     },
     getSubmenuItems (idx) {
       return [{

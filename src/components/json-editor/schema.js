@@ -27,15 +27,25 @@ const SchemaTypeMixin = {
     }
   },
   methods: {
+    getCtx () {
+      return this.ectx
+    },
     setCtx (ctx) {
       this.ectx = ctx
     },
     destroy () {
+      if (this.beforeDestroy) {
+        this.beforeDestroy()
+      }
       this.ectx = undefined
       this.$destroy()
     },
     injectCtx (prop) {
       prop.setCtx(createCtx.call(this, prop))
+    },
+    getValue () {
+      const p = this.ectx.getPath()
+      return this.ectx.getValue(p)
     },
     setValue (val) {
       const p = this.ectx.getPath()
@@ -113,12 +123,21 @@ const SchemaTypeArray = Vue.extend({
       const item = createSchemaItem(type)
       this.injectCtx(item)
       this.items.splice(idx, 0, item)
+
+      const arr = this.getValue()
+      arr.splice(idx, 0, '')
     },
     remove (idx) {
       this.items.splice(idx, 1)
+
+      const arr = this.getValue()
+      arr.splice(idx, 1)
     },
     getIdxForItem (schemaItem) {
       return this.items.findIndex(items => items === schemaItem)
+    },
+    beforeDestroy () {
+      this.items.forEach(it => it.destroy())
     }
   },
   computed: {
@@ -157,6 +176,9 @@ const SchemaTypeObject = Vue.extend({
     },
     getIdxForItem (object) {
       return this.properties.findIndex(prop => prop.prop === object)
+    },
+    beforeDestroy () {
+      this.properties.forEach(it => it.prop.destroy())
     }
   },
   computed: {
@@ -225,10 +247,18 @@ const SchemaTypeWrapper = Vue.extend({
   },
   methods: {
     changeType (newType) {
-      this.typeObject = getTypeObjectByName(newType)
+      const oldTypeObject = this.typeObject
+      const newTypeObject = getTypeObjectByName(newType)
+      newTypeObject.setCtx(oldTypeObject.getCtx())
+      this.typeObject = newTypeObject
+      oldTypeObject.destroy()
     },
     callMethod (method, ...args) {
       return this.typeObject[method](...args)
+    },
+    destroy () {
+      this.typeObject.destroy()
+      this.$destroy()
     },
     setCtx (ctx) {
       this.typeObject.setCtx(ctx)

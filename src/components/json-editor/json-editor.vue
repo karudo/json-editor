@@ -75,20 +75,6 @@ export default {
       const obj = this.getValueBySchemaPath(schemaPath)
       this.$set(obj, newKey, obj[oldKey])
       this.$delete(obj, oldKey)
-    },
-    insert (schemaPath, idx) {
-      const schema = getSchemaByPath(this.schema, schemaPath)
-      schema.callMethod('insert', idx)
-
-      const arr = this.getValueBySchemaPath(schemaPath)
-      arr.splice(idx, 0, '')
-    },
-    remove (schemaPath, idx) {
-      const schema = getSchemaByPath(this.schema, schemaPath)
-      schema.callMethod('remove', idx)
-
-      const arr = this.getValueBySchemaPath(schemaPath)
-      arr.splice(idx, 1)
     }
   }
 }
