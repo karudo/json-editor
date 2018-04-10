@@ -8,18 +8,18 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "element-ui": "^2.2.1",
+    "element-ui": "^2.3.3",
     "lodash": "^4.17.5",
-    "vue": "^2.5.15"
+    "vue": "^2.5.16"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0-beta.6",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.6",
     "@vue/cli-service": "^3.0.0-beta.6",
     "@vue/eslint-config-standard": "^3.0.0-beta.6",
-    "less": "^2.7.3",
-    "less-loader": "^4.0.5",
-    "vue-template-compiler": "^2.5.15"
+    "less": "^3.0.1",
+    "less-loader": "^4.1.0",
+    "vue-template-compiler": "^2.5.16"
   },
   "browserslist": [
     "> 1%",
