@@ -3,7 +3,7 @@
     <div>
       <slot name="name"></slot>
       <json-editor-props-menu :menu-items="arrayMenuItems"/>
-      [ {{schema.typeObject.items.length}} ]
+      [ {{schema.typeObject.length}} ]
     </div>
     <div class="children">
       <component v-for="(item, idx) in schema.typeObject.items"
@@ -32,7 +32,7 @@ export default {
         {
           divided: true,
           title: 'Add element',
-          cb: () => this.insert(this.schema.typeObject.items.length)
+          cb: () => this.insert(this.schema.typeObject.length)
         }
       ]
     }

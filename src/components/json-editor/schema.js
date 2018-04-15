@@ -9,14 +9,15 @@ function createObjectProp (key, prop) {
   }
 }
 
-function createCtx (object) {
+function createCtx (parent, item) {
   return {
     getPath: () => {
-      const index = this.getIdxForItem(object)
-      return [...this.ectx.getPath(), index]
+      const index = parent.getIdxForItem(item)
+      return [...parent.ectx.getPath(), index]
     },
-    getValue: (path) => this.ectx.getValue(path),
-    setValue: (path, value) => this.ectx.setValue(path, value)
+    getValue: (path) => parent.ectx.getValue(path),
+    setValue: (path, value) => parent.ectx.setValue(path, value),
+    deleteValue: (path) => parent.ectx.deleteValue(path)
   }
 }
 
@@ -41,11 +42,15 @@ const SchemaTypeMixin = {
       this.$destroy()
     },
     injectCtx (prop) {
-      prop.setCtx(createCtx.call(this, prop))
+      prop.setCtx(createCtx(this, prop))
     },
     getValue () {
       const p = this.ectx.getPath()
       return this.ectx.getValue(p)
+    },
+    deleteValue () {
+      const p = this.ectx.getPath()
+      return this.ectx.deleteValue(p)
     },
     setValue (val) {
       const p = this.ectx.getPath()
@@ -141,6 +146,9 @@ const SchemaTypeArray = Vue.extend({
     }
   },
   computed: {
+    length () {
+      return this.items.length
+    },
     error () {
       return this.items.some(item => item.error) && 'contains invalid items'
     }
@@ -167,7 +175,13 @@ const SchemaTypeObject = Vue.extend({
       return this.properties[idx].key
     },
     changeKey (idx, key) {
-      this.properties[idx].key = key
+      const oldKey = this.properties[idx].key
+      if (key !== oldKey) {
+        const value = this.properties[idx].prop.typeObject.getValue()
+        this.properties[idx].prop.typeObject.deleteValue(value)
+        this.properties[idx].key = key
+        this.properties[idx].prop.typeObject.setValue(value)
+      }
     },
     addProp (idx, type = 'string') {
       const prop = createSchemaItem(type)
@@ -182,6 +196,9 @@ const SchemaTypeObject = Vue.extend({
     }
   },
   computed: {
+    length () {
+      return this.properties.length
+    },
     error () {
       return this.properties.some(prop => prop.prop.error) && 'contains invalid properties'
     }
@@ -229,6 +246,10 @@ function detectTypeName (value) {
   return types.find(tn => typesCheckers[tn].checker(value))
 }
 
+function convertValue (type, oldValue) {
+  return typesCheckers[type].defValue(oldValue)
+}
+
 let num = 0
 export function getTypeObjectByName (typeName, options) {
   return new typesCheckers[typeName].Class({
@@ -248,9 +269,11 @@ const SchemaTypeWrapper = Vue.extend({
   methods: {
     changeType (newType) {
       const oldTypeObject = this.typeObject
+      const oldValue = oldTypeObject.getValue()
       const newTypeObject = getTypeObjectByName(newType)
       newTypeObject.setCtx(oldTypeObject.getCtx())
       this.typeObject = newTypeObject
+      this.typeObject.setValue(convertValue(oldValue))
       oldTypeObject.destroy()
     },
     callMethod (method, ...args) {
@@ -258,6 +281,7 @@ const SchemaTypeWrapper = Vue.extend({
     },
     destroy () {
       this.typeObject.destroy()
+      this.typeObject = undefined
       this.$destroy()
     },
     setCtx (ctx) {
@@ -277,10 +301,6 @@ function createSchemaItem (type, options) {
   return new SchemaTypeWrapper({
     data: {typeObject}
   })
-}
-
-export function convertValue (type, oldValue) {
-  return typesCheckers[type].defValue(oldValue)
 }
 
 export function getEditorSchema (json) {

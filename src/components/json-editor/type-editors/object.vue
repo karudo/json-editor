@@ -3,7 +3,7 @@
     <div>
       <slot name="name"></slot>
       <json-editor-props-menu :menu-items="objectMenuItems"/>
-      { {{schema.typeObject.properties.length}} }
+      { {{schema.typeObject.length}} }
     </div>
     <div class="children">
       <component v-for="(prop, idx) in schema.typeObject.properties"
@@ -31,17 +31,14 @@ export default {
         {
           divided: true,
           title: 'Add prop',
-          cb: () => this.jsonEditor.addProp(this.schemaPath, this.schema.typeObject.properties.length)
+          cb: () => this.schema.typeObject.addProp(this.schema.typeObject.length)
         }
       ]
     }
   },
   methods: {
     onChangeKey (idx, newKeyName) {
-      const oldKeyName = this.schema.typeObject.properties[idx].key
-      if (newKeyName !== oldKeyName) {
-        this.jsonEditor.changeKey(this.schemaPath, idx, newKeyName)
-      }
+      this.schema.typeObject.changeKey(idx, newKeyName)
     }
   }
 }

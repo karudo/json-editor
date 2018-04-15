@@ -1,6 +1,5 @@
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
-import {symbolTypeEditor, symbolRoot} from '../symbols'
 const defaultTypes = ['number', 'string', 'array', 'object', 'boolean', 'null']
 export default {
   props: {
@@ -14,18 +13,6 @@ export default {
       default: () => []
     }
   },
-  inject: {
-    jsonEditor: {
-      from: symbolRoot
-    }
-  },
-  provide () {
-    return {
-      [symbolTypeEditor]: {
-        changeType: this.changeType
-      }
-    }
-  },
   computed: {
     cValue: {
       get () {
@@ -33,7 +20,6 @@ export default {
       },
       set (v) {
         this.schema.typeObject.setValue(v)
-        // this.jsonEditor.setValue(this.path, v)
       }
     },
     menuItems () {
@@ -50,7 +36,7 @@ export default {
   methods: {
     changeType (newType) {
       if (this.schema.type !== newType) {
-        this.jsonEditor.changeType(this.schemaPath, newType)
+        this.schema.changeType(newType)
       }
     }
   },
