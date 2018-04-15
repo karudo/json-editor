@@ -187,6 +187,7 @@ const SchemaTypeObject = Vue.extend({
       const prop = createSchemaItem(type)
       this.injectCtx(prop)
       this.properties.splice(idx, 0, createObjectProp('', prop))
+      prop.typeObject.setValue('')
     },
     getIdxForItem (object) {
       return this.properties.findIndex(prop => prop.prop === object)
@@ -273,7 +274,7 @@ const SchemaTypeWrapper = Vue.extend({
       const newTypeObject = getTypeObjectByName(newType)
       newTypeObject.setCtx(oldTypeObject.getCtx())
       this.typeObject = newTypeObject
-      this.typeObject.setValue(convertValue(oldValue))
+      this.typeObject.setValue(convertValue(newType, oldValue))
       oldTypeObject.destroy()
     },
     callMethod (method, ...args) {
