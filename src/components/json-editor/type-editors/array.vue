@@ -30,6 +30,9 @@ export default {
       return [
         ...this.menuItems,
         {
+          divider: true
+        },
+        {
           divided: true,
           title: 'Add element',
           cb: () => this.insert(this.schema.typeObject.length)
@@ -46,6 +49,8 @@ export default {
     },
     getSubmenuItems (idx) {
       return [{
+        divider: true
+      }, {
         divided: true,
         title: 'Insert before',
         cb: () => this.insert(idx)

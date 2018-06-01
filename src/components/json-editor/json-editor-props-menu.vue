@@ -1,30 +1,30 @@
 <template>
   <span style="cursor: pointer">
     :
-    <el-dropdown trigger="click"
-                 :show-timeout="100"
-                 @command="handleCommand"
-    >
-      <span class="el-dropdown-link"><i class="el-icon-setting"></i></span>
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item v-for="(t, idx) in menuItems"
-                          :key="t.title"
-                          :command="idx"
-                          :class="t.selected && 'selected-item'"
-                          :divided="t.divided"
-        >
+    <b-dropdown :id="htmlId" no-caret variant="link" size="sm">
+      <template slot="button-content">
+        <span class="fa fa-cog"></span>
+      </template>
+      <template v-for="(t, idx) in menuItems">
+        <b-dropdown-divider v-if="t.divider" :key="t.title"></b-dropdown-divider>
+        <b-dropdown-item v-else :active="t.selected" :key="t.title" @click="handleCommand(idx)">
           {{t.title}}
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
+        </b-dropdown-item>
+
+      </template>
+    </b-dropdown>
     :
   </span>
 </template>
 
 <script>
+let i = 0
 export default {
   props: {
-    menuItems: Array
+    menuItems: Array,
+    htmlId: {
+      default: () => `props-menu-${i++}`
+    }
   },
   methods: {
     handleCommand (idx) {

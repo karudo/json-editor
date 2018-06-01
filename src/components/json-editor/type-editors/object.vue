@@ -29,6 +29,9 @@ export default {
       return [
         ...this.menuItems,
         {
+          divider: true
+        },
+        {
           divided: true,
           title: 'Add prop',
           cb: () => this.schema.typeObject.addProp(this.schema.typeObject.length)
