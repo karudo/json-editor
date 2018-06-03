@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <b-container fluid>
     <HelloWorld />
-  </div>
+  </b-container>
 </template>
 
 <script>

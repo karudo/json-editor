@@ -1,26 +1,17 @@
 <template>
-  <div>
+  <div class="d-inline-flex align-items-start">
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
-    <editable-span v-model="sValue" class="number"/>
+    <b-input-group size="sm">
+      <b-form-input type="text" v-model.number="cValue" placeholder=""></b-form-input>
+    </b-input-group>
   </div>
 </template>
 
 <script>
 import EditorMixin from './editor-mixin'
-import {floatVal} from '../utils'
 export default {
-  mixins: [EditorMixin],
-  computed: {
-    sValue: {
-      get () {
-        return `${this.cValue}`
-      },
-      set (v) {
-        this.cValue = floatVal(v)
-      }
-    }
-  }
+  mixins: [EditorMixin]
 }
 </script>
 

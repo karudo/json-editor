@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div class="d-inline-flex align-items-start">
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
-    <span class="value">"<editable-span v-model="cValue"/>"</span>
-    : {{cValue.length}}
+    <b-input-group size="sm" :append="`${cValue.length}`">
+      <b-form-input type="text" v-model="cValue" placeholder=""></b-form-input>
+    </b-input-group>
   </div>
 </template>
 

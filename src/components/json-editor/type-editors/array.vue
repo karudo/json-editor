@@ -33,7 +33,6 @@ export default {
           divider: true
         },
         {
-          divided: true,
           title: 'Add element',
           cb: () => this.insert(this.schema.typeObject.length)
         }
@@ -51,7 +50,6 @@ export default {
       return [{
         divider: true
       }, {
-        divided: true,
         title: 'Insert before',
         cb: () => this.insert(idx)
       }, {
