@@ -23,7 +23,7 @@ export default {
       }
     },
     menuItems () {
-      const type = this.schema.type
+      const type = this.schema.typeName
       return defaultTypes.map(tn => {
         return {
           cb: () => this.changeType(tn),
