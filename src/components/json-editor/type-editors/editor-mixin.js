@@ -24,13 +24,11 @@ export default {
     },
     menuItems () {
       const type = this.schema.typeName
-      return defaultTypes.map(tn => {
-        return {
-          cb: () => this.changeType(tn),
-          title: tn,
-          selected: tn === type
-        }
-      }).concat(this.parentMenuItems)
+      return defaultTypes.map(tn => ({
+        cb: () => this.changeType(tn),
+        title: tn,
+        selected: tn === type
+      })).concat(this.parentMenuItems)
     }
   },
   methods: {
