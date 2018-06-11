@@ -3,16 +3,15 @@
     <div>
       <slot name="name"></slot>
       <json-editor-props-menu :menu-items="arrayMenuItems"/>
-      [ {{schema.typeObject.length}} ]
+      [ {{schema.items.length}} ]
     </div>
     <div class="children">
-      <component v-for="(item, idx) in schema.typeObject.items"
-                 :is="`json-editor-${item.typeName}`"
+      <component v-for="(item, idx) in schema.items"
+                 :is="`json-editor-${item.type}`"
                  :key="`${idx}-${item.num}`"
                  :path="[...path, idx]"
                  :schema-path="[...schemaPath, idx]"
                  :schema="item"
-                 :value="value[idx]"
                  :parent-menu-items="getSubmenuItems(idx)"
       >
         <span slot="name">{{idx}}</span>
@@ -23,6 +22,7 @@
 
 <script>
 import EditorMixin from './editor-mixin'
+import {vuexModuleName} from '../constants'
 export default {
   mixins: [EditorMixin],
   computed: {
@@ -34,7 +34,7 @@ export default {
         },
         {
           title: 'Add element',
-          cb: () => this.insert(this.schema.typeObject.length)
+          cb: () => this.insert(this.schema.items.length)
         }
       ]
     }
@@ -44,7 +44,12 @@ export default {
       this.schema.typeObject.insert(idx)
     },
     remove (idx) {
-      this.schema.typeObject.remove(idx)
+      this.$store.commit(`${vuexModuleName}/arrayRemoveElement`, {
+        id: this.jsonEditor.schemaId,
+        path: this.schemaPath,
+        idx
+      })
+      this.jsonEditor.arrayRemoveElement(this.path, idx)
     },
     getSubmenuItems (idx) {
       return [{

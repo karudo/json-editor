@@ -3,16 +3,15 @@
     <div>
       <slot name="name"></slot>
       <json-editor-props-menu :menu-items="objectMenuItems"/>
-      { {{schema.typeObject.length}} }
+      { {{schema.properties.length}} }
     </div>
     <div class="children">
-      <component v-for="(prop, idx) in schema.typeObject.properties"
+      <component v-for="(prop, idx) in schema.properties"
+                 :key="prop.prop.num"
+                 :is="`json-editor-${prop.prop.type}`"
                  :path="[...path, prop.key]"
                  :schema-path="[...schemaPath, idx]"
-                 :key="prop.key"
-                 :is="`json-editor-${prop.prop.typeName}`"
                  :schema="prop.prop"
-                 v-model="value[prop.key]"
       >
         <editable-span slot="name" :value="prop.key" @change="onChangeKey(idx, $event)"/>
       </component>

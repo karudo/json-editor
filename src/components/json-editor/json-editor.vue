@@ -1,6 +1,6 @@
 <template>
   <div>
-    <component :is="`json-editor-${schema.typeName}`"
+    <component :is="`json-editor-${schema.type}`"
                :path="[]"
                :schema-path="[]"
                :schema="schema"
@@ -9,31 +9,24 @@
 </template>
 
 <script>
-import {getValueByPath} from './schema2'
-import {jsonEditorSymbol} from './symbols'
+import {getValueByPath} from './schema'
+import {jsonEditorSymbol, vuexModuleName} from './constants'
 export default {
   props: ['schemaId', 'value'],
-  created () {
-    this.schema.setCtx({
-      getPath: () => [],
-      getValue: this.getValue,
-      setValue: this.setValue,
-      deleteValue: this.deleteValue
-    })
-  },
   provide () {
     return {
       [jsonEditorSymbol]: {
         schemaId: this.schemaId,
         getValue: this.getValue,
         setValue: this.setValue,
-        deleteValue: this.deleteValue
+        objectRemoveProp: this.objectRemoveProp,
+        arrayRemoveElement: this.arrayRemoveElement
       }
     }
   },
   computed: {
     schema () {
-      return this.$store.jsonEditor.getters.getEditorById(this.schemaId)
+      return this.$store.getters[`${vuexModuleName}/getEditorById`](this.schemaId)
     }
   },
   methods: {
@@ -50,13 +43,17 @@ export default {
         this.$emit('input', newValue)
       }
     },
-    deleteValue (path) {
+    objectRemoveProp (path) {
       if (path.length) {
         const objPath = [...path]
         const key = objPath.pop()
         const obj = getValueByPath(this.value, objPath)
         this.$delete(obj, key)
       }
+    },
+    arrayRemoveElement (path, idx) {
+      const arr = getValueByPath(this.value, path)
+      arr.splice(idx, 1)
     }
   }
 }

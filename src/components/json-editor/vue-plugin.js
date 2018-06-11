@@ -6,6 +6,7 @@ import JsonEditorObject from './type-editors/object'
 import JsonEditorString from './type-editors/string'
 
 import JsonEditor from './json-editor'
+import JsonEditorAutodetect from './json-editor-autodetect'
 
 const components = {
   JsonEditorArray,
@@ -14,7 +15,8 @@ const components = {
   JsonEditorNumber,
   JsonEditorObject,
   JsonEditorString,
-  JsonEditor
+  JsonEditor,
+  JsonEditorAutodetect
 }
 
 export default {

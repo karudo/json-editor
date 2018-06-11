@@ -2,8 +2,8 @@
   <div class="d-inline-flex align-items-start">
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
-    <b-input-group size="sm" :append="`${cValue.length}`">
-      <b-form-input type="text" v-model="cValue" placeholder=""></b-form-input>
+    <b-input-group size="sm" :append="`${value.length}`">
+      <b-form-input type="text" v-model="value" placeholder=""></b-form-input>
     </b-input-group>
   </div>
 </template>

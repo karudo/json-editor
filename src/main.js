@@ -8,7 +8,7 @@ import '@fortawesome/fontawesome-free-webfonts/less/fa-brands.less'
 
 import store from './store'
 
-import JsonEditor from './components/json-editor'
+import JsonEditor from './components/json-editor/vue-plugin'
 
 import App from './App.vue'
 

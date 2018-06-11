@@ -3,7 +3,7 @@
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
     <b-input-group size="sm">
-      <b-form-input type="text" v-model.number="cValue" placeholder=""></b-form-input>
+      <b-form-input type="text" v-model.number="value" placeholder=""></b-form-input>
     </b-input-group>
   </div>
 </template>

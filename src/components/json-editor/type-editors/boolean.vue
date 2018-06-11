@@ -2,7 +2,7 @@
   <div>
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
-    <input type="checkbox" v-model="cValue">
+    <input type="checkbox" v-model="value">
     {{strVal}}
   </div>
 </template>

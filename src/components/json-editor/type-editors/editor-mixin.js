@@ -1,4 +1,4 @@
-import {jsonEditorSymbol} from '../symbols'
+import {jsonEditorSymbol} from '../constants'
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
 const typesNames = ['number', 'string', 'array', 'object', 'boolean', 'null']
@@ -19,12 +19,12 @@ export default {
     }
   },
   computed: {
-    cValue: {
+    value: {
       get () {
         return this.jsonEditor.getValue(this.path)
       },
       set (v) {
-        this.this.jsonEditor.setValue(this.path, v)
+        this.jsonEditor.setValue(this.path, v)
       }
     },
     menuItems () {
