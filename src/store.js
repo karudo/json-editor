@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -8,16 +9,25 @@ const store = new Vuex.Store({
     jsonEditor: {
       namespaced: true,
       state: {
-
+        editors: {}
+      },
+      getters: {
+        getEditorById: state => id => state.editors[id]
       },
       mutations: {
         addEditor (state, {id, schema}) {
+          state.editors[id] = schema
+        },
+        arrayAddElement (state, {id, path, idx, type}) {
 
         },
-        addElementToArray (state, {id, idx, element}) {
+        arrayRemoveElement (state, {id, path, idx}) {
 
         },
-        addPropToObject (state, {id, key, prop}) {
+        objectAddProp (state, {id, path, key, type}) {
+
+        },
+        objectRemoveProp (state, {id, path, key}) {
 
         }
       }

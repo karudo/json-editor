@@ -4,15 +4,15 @@
                :path="[]"
                :schema-path="[]"
                :schema="schema"
-               :value="value"
     />
   </div>
 </template>
 
 <script>
-import {getValueByPath, getValuePathPySchemaPath} from './utils'
+import {getValueByPath} from './schema2'
+import {jsonEditorSymbol} from './symbols'
 export default {
-  props: ['schema', 'value'],
+  props: ['schemaId', 'value'],
   created () {
     this.schema.setCtx({
       getPath: () => [],
@@ -21,13 +21,26 @@ export default {
       deleteValue: this.deleteValue
     })
   },
+  provide () {
+    return {
+      [jsonEditorSymbol]: {
+        schemaId: this.schemaId,
+        getValue: this.getValue,
+        setValue: this.setValue,
+        deleteValue: this.deleteValue
+      }
+    }
+  },
+  computed: {
+    schema () {
+      return this.$store.jsonEditor.getters.getEditorById(this.schemaId)
+    }
+  },
   methods: {
-    getValue (schemaPath) {
-      const path = getValuePathPySchemaPath(this.schema, schemaPath)
+    getValue (path) {
       return getValueByPath(this.value, path)
     },
-    setValue (schemaPath, newValue) {
-      const path = getValuePathPySchemaPath(this.schema, schemaPath)
+    setValue (path, newValue) {
       if (path.length) {
         const objPath = [...path]
         const key = objPath.pop()
@@ -37,8 +50,7 @@ export default {
         this.$emit('input', newValue)
       }
     },
-    deleteValue (schemaPath) {
-      const path = getValuePathPySchemaPath(this.schema, schemaPath)
+    deleteValue (path) {
       if (path.length) {
         const objPath = [...path]
         const key = objPath.pop()

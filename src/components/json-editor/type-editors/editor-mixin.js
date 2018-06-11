@@ -1,30 +1,35 @@
+import {jsonEditorSymbol} from '../symbols'
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
-const defaultTypes = ['number', 'string', 'array', 'object', 'boolean', 'null']
+const typesNames = ['number', 'string', 'array', 'object', 'boolean', 'null']
 export default {
   props: {
     path: Array,
-    value: null,
-    schema: null,
     schemaPath: Array,
+    schema: null,
 
     parentMenuItems: {
       type: Array,
       default: () => []
     }
   },
+  inject: {
+    jsonEditor: {
+      from: jsonEditorSymbol
+    }
+  },
   computed: {
     cValue: {
       get () {
-        return this.value
+        return this.jsonEditor.getValue(this.path)
       },
       set (v) {
-        this.schema.typeObject.setValue(v)
+        this.this.jsonEditor.setValue(this.path, v)
       }
     },
     menuItems () {
-      const type = this.schema.typeName
-      return defaultTypes.map(tn => ({
+      const {type} = this.schema
+      return typesNames.map(tn => ({
         cb: () => this.changeType(tn),
         title: tn,
         selected: tn === type

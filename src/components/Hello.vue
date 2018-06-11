@@ -2,16 +2,16 @@
   <div class="qwe">
     <div class="row">
       <div><pre>{{value}}</pre></div>
-      <div><pre>{{schema}}</pre></div>
+      <div><pre>{{schemaId}}</pre></div>
     </div>
     <div class="row">
-      <json-editor :schema="schema" v-model="value"/>
+      <!--json-editor :schema="schema" v-model="value"/-->
     </div>
   </div>
 </template>
 
 <script>
-import {getEditorSchema} from '@/components/json-editor/schema'
+import {getEditorSchema, generateVuexID} from '@/components/json-editor/schema2'
 export default {
   data () {
     const value = {
@@ -21,12 +21,17 @@ export default {
       },
       a1: [{ex5: false}, [null, false, 9]]
     }
-    const schema = getEditorSchema(value)
-    console.log(333, schema)
     return {
       value,
-      schema
+      schemaId: generateVuexID()
     }
+  },
+  created () {
+    const schema = getEditorSchema(this.value)
+    this.$store.commit('jsonEditor/addEditor', {
+      id: this.schemaId,
+      schema
+    })
   }
 }
 </script>
