@@ -11,7 +11,6 @@
                  :key="`${idx}-${item.num}`"
                  :path="[...path, idx]"
                  :schema-path="[...schemaPath, idx]"
-                 :schema="item"
                  :parent-menu-items="getSubmenuItems(idx)"
       >
         <span slot="name">{{idx}}</span>

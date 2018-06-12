@@ -3,7 +3,6 @@
     <component :is="`json-editor-${schema.type}`"
                :path="[]"
                :schema-path="[]"
-               :schema="schema"
     />
   </div>
 </template>
@@ -37,7 +36,7 @@ export default {
       if (path.length) {
         const objPath = [...path]
         const key = objPath.pop()
-        const obj = getValueByPath(this.value, objPath)
+        const obj = this.getValue(objPath)
         this.$set(obj, key, newValue)
       } else {
         this.$emit('input', newValue)
@@ -52,7 +51,7 @@ export default {
       }
     },
     arrayRemoveElement (path, idx) {
-      const arr = getValueByPath(this.value, path)
+      const arr = this.getValue(path)
       arr.splice(idx, 1)
     }
   }

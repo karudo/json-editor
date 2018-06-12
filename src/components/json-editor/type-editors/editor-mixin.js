@@ -1,4 +1,4 @@
-import {jsonEditorSymbol} from '../constants'
+import {jsonEditorSymbol, vuexModuleName} from '../constants'
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
 const typesNames = ['number', 'string', 'array', 'object', 'boolean', 'null']
@@ -6,7 +6,6 @@ export default {
   props: {
     path: Array,
     schemaPath: Array,
-    schema: null,
 
     parentMenuItems: {
       type: Array,
@@ -19,6 +18,9 @@ export default {
     }
   },
   computed: {
+    schema () {
+      return this.$store.getters[`${vuexModuleName}/getSchema`](this.jsonEditor.schemaId, this.schemaPath)
+    },
     value: {
       get () {
         return this.jsonEditor.getValue(this.path)

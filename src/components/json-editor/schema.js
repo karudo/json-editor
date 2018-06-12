@@ -84,8 +84,7 @@ export function getSchemaByPath (schema, path) {
   for (const idx of path) {
     if (schema.type === 'array') {
       schema = schema.items[idx]
-    }
-    if (schema.type === 'object') {
+    } else if (schema.type === 'object') {
       schema = schema.properties[idx].prop
     }
   }

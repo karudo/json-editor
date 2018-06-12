@@ -11,7 +11,6 @@
                  :is="`json-editor-${prop.prop.type}`"
                  :path="[...path, prop.key]"
                  :schema-path="[...schemaPath, idx]"
-                 :schema="prop.prop"
       >
         <editable-span slot="name" :value="prop.key" @change="onChangeKey(idx, $event)"/>
       </component>

@@ -16,12 +16,13 @@ export default {
     const value = {
       q1: 9,
       q2: {
-        xsss: 'yes!'
+        xsss: 'yes!',
+        mama: null
       },
       q3: [
         {ex5: false},
         [
-          null,
+          'd',
           false,
           9
         ]
@@ -33,7 +34,7 @@ export default {
   },
   computed: {
     schema () {
-      return this.$store.state.jsonEditor.editors
+      return this.$store.state.jsonEditor
     }
   }
 }
