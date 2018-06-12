@@ -144,14 +144,6 @@ const SchemaTypeArray = Vue.extend({
     beforeDestroy () {
       this.items.forEach(it => it.destroy())
     }
-  },
-  computed: {
-    length () {
-      return this.items.length
-    },
-    error () {
-      return this.items.some(item => item.error) && 'contains invalid items'
-    }
   }
 })
 
@@ -165,6 +157,14 @@ const SchemaTypeObject = Vue.extend({
         this.injectCtx(prop)
         return createObjectProp(key, prop)
       })
+    }
+  },
+  computed: {
+    length () {
+      return this.properties.length
+    },
+    error () {
+      return this.properties.some(prop => prop.prop.error) && 'contains invalid properties'
     }
   },
   methods: {
@@ -194,14 +194,6 @@ const SchemaTypeObject = Vue.extend({
     },
     beforeDestroy () {
       this.properties.forEach(it => it.prop.destroy())
-    }
-  },
-  computed: {
-    length () {
-      return this.properties.length
-    },
-    error () {
-      return this.properties.some(prop => prop.prop.error) && 'contains invalid properties'
     }
   }
 })
