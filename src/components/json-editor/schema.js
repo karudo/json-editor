@@ -37,7 +37,7 @@ function detectTypeName (value) {
 }
 
 let num = 0
-function createSchemaItem (type, options) {
+export function createSchemaItem (type, options) {
   return {
     num: ++num,
     type,

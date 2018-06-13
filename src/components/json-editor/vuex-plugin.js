@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import {vuexModuleName} from './constants'
-import {getSchemaByPath} from './schema'
+import {getSchemaByPath, createSchemaItem} from './schema'
 
 const plugin = {
   namespaced: true,
@@ -14,7 +14,8 @@ const plugin = {
       Vue.set(state, id, schema)
     },
     arrayAddElement (state, {id, path, idx, type}) {
-
+      const schema = getSchemaByPath(state[id], path)
+      schema.items.splice(idx, 0, createSchemaItem(type))
     },
     arrayRemoveElement (state, {id, path, idx}) {
       const schema = getSchemaByPath(state[id], path)

@@ -8,7 +8,7 @@
     <div class="children">
       <component v-for="(item, idx) in schema.items"
                  :is="`json-editor-${item.type}`"
-                 :key="`${idx}-${item.num}`"
+                 :key="item.num"
                  :path="[...path, idx]"
                  :schema-path="[...schemaPath, idx]"
                  :parent-menu-items="getSubmenuItems(idx)"
@@ -30,8 +30,7 @@ export default {
         ...this.menuItems,
         {
           divider: true
-        },
-        {
+        }, {
           title: 'Add element',
           cb: () => this.insert(this.schema.items.length)
         }
@@ -40,7 +39,13 @@ export default {
   },
   methods: {
     insert (idx) {
-      this.schema.typeObject.insert(idx)
+      this.$store.commit(`${vuexModuleName}/arrayAddElement`, {
+        id: this.jsonEditor.schemaId,
+        path: this.schemaPath,
+        idx,
+        type: 'string'
+      })
+      this.jsonEditor.arrayAddElement(this.path, idx, '')
     },
     remove (idx) {
       this.$store.commit(`${vuexModuleName}/arrayRemoveElement`, {

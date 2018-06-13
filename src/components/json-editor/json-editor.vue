@@ -19,6 +19,7 @@ export default {
         getValue: this.getValue,
         setValue: this.setValue,
         objectRemoveProp: this.objectRemoveProp,
+        arrayAddElement: this.arrayAddElement,
         arrayRemoveElement: this.arrayRemoveElement
       }
     }
@@ -49,6 +50,10 @@ export default {
         const obj = getValueByPath(this.value, objPath)
         this.$delete(obj, key)
       }
+    },
+    arrayAddElement (path, idx, val) {
+      const arr = this.getValue(path)
+      arr.splice(idx, 0, val)
     },
     arrayRemoveElement (path, idx) {
       const arr = this.getValue(path)
