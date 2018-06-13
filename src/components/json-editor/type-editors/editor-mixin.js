@@ -1,7 +1,7 @@
 import {jsonEditorSymbol, vuexModuleName} from '../constants'
+import {typesCheckers, typesNames} from '../schema'
 import JsonEditorPropsMenu from '../json-editor-props-menu'
 import EditableSpan from '../editable-span'
-const typesNames = ['number', 'string', 'array', 'object', 'boolean', 'null']
 export default {
   props: {
     path: Array,
@@ -41,7 +41,12 @@ export default {
   methods: {
     changeType (newType) {
       if (this.schema.type !== newType) {
-        this.schema.changeType(newType)
+        this.$store.commit(`${vuexModuleName}/changeType`, {
+          id: this.jsonEditor.schemaId,
+          path: this.schemaPath,
+          type: newType
+        })
+        this.value = typesCheckers[newType].defValue(this.value)
       }
     }
   },

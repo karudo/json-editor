@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import {floatVal} from '@/components/json-editor/utils'
 
-const typesCheckers = {
+export const typesCheckers = {
   number: {
     checker: _.isNumber,
     defValue: floatVal
@@ -14,11 +14,13 @@ const typesCheckers = {
   },
   object: {
     checker: _.isPlainObject,
-    defValue: () => ({})
+    defValue: () => ({}),
+    defOptions: () => ({properties: []})
   },
   array: {
     checker: _.isArray,
-    defValue: () => ([])
+    defValue: () => ([]),
+    defOptions: () => ({items: []})
   },
   boolean: {
     checker: _.isBoolean,
@@ -41,6 +43,7 @@ export function createSchemaItem (type, options) {
   return {
     num: ++num,
     type,
+    ...(typesCheckers[type].defOptions && typesCheckers[type].defOptions()),
     ...options
   }
 }
