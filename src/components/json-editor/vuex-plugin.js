@@ -2,7 +2,7 @@ import Vue from 'vue'
 import {vuexModuleName} from './constants'
 import {getSchemaByPath, createSchemaItem} from './schema'
 
-const plugin = {
+const module = {
   namespaced: true,
   state: {},
   getters: {
@@ -47,5 +47,5 @@ const plugin = {
 }
 
 export default function (store) {
-  store.registerModule(vuexModuleName, plugin)
+  store.registerModule(vuexModuleName, module)
 }

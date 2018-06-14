@@ -1,5 +1,9 @@
 import _ from 'lodash'
-import {floatVal} from '@/components/json-editor/utils'
+
+export function floatVal (v) {
+  v = parseFloat(v)
+  return isNaN(v) ? 0 : v
+}
 
 export const typesCheckers = {
   number: {
@@ -47,6 +51,13 @@ export function createSchemaItem (type, options) {
     ...options
   }
 }
+export function createObjectProp (key, prop) {
+  return {
+    key,
+    keyEdit: false,
+    prop
+  }
+}
 
 export function getEditorSchema (json) {
   const type = detectTypeName(json)
@@ -59,10 +70,7 @@ export function getEditorSchema (json) {
       break
     case 'object':
       schema = createSchemaItem(type, {
-        properties: _.map(json, (prop, key) => ({
-          key,
-          prop: getEditorSchema(prop)
-        }))
+        properties: _.map(json, (prop, key) => createObjectProp(key, getEditorSchema(prop)))
       })
       break
     default:
