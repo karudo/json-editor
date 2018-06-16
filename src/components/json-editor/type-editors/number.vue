@@ -1,5 +1,5 @@
 <template>
-  <div class="element number d-flex align-items-start">
+  <div class="element number d-flex align-items-center">
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
     <b-input-group size="sm">

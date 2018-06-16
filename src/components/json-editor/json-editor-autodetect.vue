@@ -1,5 +1,5 @@
 <template>
-  <json-editor :schemaId="schemaId" v-model="value"/>
+  <json-editor :schemaId="schemaId" v-model="val"/>
 </template>
 
 <script>
@@ -16,6 +16,16 @@ export default {
       id: this.schemaId,
       schema
     })
+  },
+  computed: {
+    val: {
+      get () {
+        return this.value
+      },
+      set (v) {
+        this.$emit('input', v)
+      }
+    },
   }
 }
 </script>

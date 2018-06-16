@@ -1,11 +1,11 @@
 <template>
   <div class="qwe">
     <div class="row">
-      <div><pre>{{value}}</pre></div>
-      <div><pre>{{schema}}</pre></div>
+      <json-editor-autodetect v-model="value"/>
     </div>
     <div class="row">
-      <json-editor-autodetect v-model="value"/>
+      <div><pre>{{value}}</pre></div>
+      <div><pre>{{schema}}</pre></div>
     </div>
   </div>
 </template>

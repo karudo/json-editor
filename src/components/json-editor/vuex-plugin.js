@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import {vuexModuleName} from './constants'
-import {getSchemaByPath, createSchemaItem} from './schema'
+import {getSchemaByPath, createSchemaItem, createObjectProp} from './schema'
 
 const module = {
   namespaced: true,
@@ -37,11 +37,17 @@ const module = {
       const schema = getSchemaByPath(state[id], path)
       schema.items.splice(idx, 1)
     },
-    objectAddProp (state, {id, path, key, type}) {
-
+    objectAddProp (state, {id, path, name, type}) {
+      const schema = getSchemaByPath(state[id], path)
+      schema.properties.push(createObjectProp(name, createSchemaItem(type)))
     },
-    objectRemoveProp (state, {id, path, key}) {
-
+    objectChangeKey (state, {id, path, idx, newName}) {
+      const schema = getSchemaByPath(state[id], path)
+      Vue.set(schema.properties[idx], 'key', newName)
+    },
+    objectRemoveProp (state, {id, path, idx}) {
+      const schema = getSchemaByPath(state[id], path)
+      schema.properties.splice(idx, 1)
     }
   }
 }

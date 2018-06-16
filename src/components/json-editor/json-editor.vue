@@ -18,6 +18,8 @@ export default {
         schemaId: this.schemaId,
         getValue: this.getValue,
         setValue: this.setValue,
+        objectAddProp: this.objectAddProp,
+        objectChangeKey: this.objectChangeKey,
         objectRemoveProp: this.objectRemoveProp,
         arrayAddElement: this.arrayAddElement,
         arrayRemoveElement: this.arrayRemoveElement
@@ -43,13 +45,18 @@ export default {
         this.$emit('input', newValue)
       }
     },
-    objectRemoveProp (path) {
-      if (path.length) {
-        const objPath = [...path]
-        const key = objPath.pop()
-        const obj = getValueByPath(this.value, objPath)
-        this.$delete(obj, key)
-      }
+    objectAddProp (path, name, value) {
+      const obj = this.getValue(path)
+      this.$set(obj, name, value)
+    },
+    objectChangeKey (path, oldName, newName) {
+      const obj = this.getValue(path)
+      this.$set(obj, newName, obj[oldName])
+      this.$delete(obj, oldName)
+    },
+    objectRemoveProp (path, name) {
+      const obj = this.getValue(path)
+      this.$delete(obj, name)
     },
     arrayAddElement (path, idx, val) {
       const arr = this.getValue(path)

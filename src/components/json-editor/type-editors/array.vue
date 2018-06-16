@@ -1,6 +1,6 @@
 <template>
   <div class="element array">
-    <div class="element d-flex">
+    <div class="element d-flex align-items-center">
       <slot name="name"></slot>
       <json-editor-props-menu :menu-items="arrayMenuItems"/>
       [ {{schema.items.length}} ]
@@ -13,7 +13,7 @@
                  :schema-path="[...schemaPath, idx]"
                  :parent-menu-items="getSubmenuItems(idx)"
       >
-        <span slot="name" class="prop-name">{{idx}}</span>
+        <span slot="name" class="complex-prop-name object-array-index bg-light">{{idx}}</span>
       </component>
     </div>
   </div>

@@ -7,7 +7,7 @@
   .children {
     padding-left: 1rem;
   }
-  .prop-name {
+  .complex-prop-name {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -19,13 +19,21 @@
     line-height: 1.5;
     font-size: 1rem;
 
+    border-radius: .25rem;
+
     white-space: nowrap;
   }
 
-  .object {
-    .prop-name {
-      min-width: 4rem;
-      background-color: cornsilk;
+  .object-prop-name {
+    min-width: 4rem;
+    background-color: cornsilk;
+    cursor: pointer;
+
+    &:hover {
+      background-color: goldenrod;
     }
+  }
+
+  .object-array-index {
   }
 }
