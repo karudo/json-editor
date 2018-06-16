@@ -10,13 +10,6 @@ export default {
   data: () => ({
     schemaId: generateVuexID()
   }),
-  created () {
-    const schema = getEditorSchema(this.value)
-    this.$store.commit(`${vuexModuleName}/addEditor`, {
-      id: this.schemaId,
-      schema
-    })
-  },
   computed: {
     val: {
       get () {
@@ -25,7 +18,14 @@ export default {
       set (v) {
         this.$emit('input', v)
       }
-    },
+    }
+  },
+  created () {
+    const schema = getEditorSchema(this.value)
+    this.$store.commit(`${vuexModuleName}/addEditor`, {
+      id: this.schemaId,
+      schema
+    })
   }
 }
 </script>
