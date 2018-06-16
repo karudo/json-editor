@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div>
+  <div class="element array">
+    <div class="element d-flex">
       <slot name="name"></slot>
       <json-editor-props-menu :menu-items="arrayMenuItems"/>
       [ {{schema.items.length}} ]
@@ -13,7 +13,7 @@
                  :schema-path="[...schemaPath, idx]"
                  :parent-menu-items="getSubmenuItems(idx)"
       >
-        <span slot="name">{{idx}}</span>
+        <span slot="name" class="prop-name">{{idx}}</span>
       </component>
     </div>
   </div>
@@ -72,9 +72,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.children {
-  padding-left: 20px;
-}
-</style>

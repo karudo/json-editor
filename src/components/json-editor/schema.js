@@ -1,45 +1,52 @@
 import _ from 'lodash'
 
+const tnNumber = 'number'
+const tnString = 'string'
+const tnObject = 'object'
+const tnArray = 'array'
+const tnBoolean = 'boolean'
+const tnNull = 'null'
+
 export function floatVal (v) {
   v = parseFloat(v)
   return isNaN(v) ? 0 : v
 }
 
 export const typesCheckers = {
-  number: {
+  [tnNumber]: {
     checker: _.isNumber,
     defValue: floatVal
   },
-  string: {
+  [tnString]: {
     checker: _.isString,
     defValue (oldVal) {
       return (_.isString(oldVal) || _.isNumber(oldVal) || _.isBoolean(oldVal)) ? `${oldVal}` : ''
     }
   },
-  object: {
+  [tnObject]: {
     checker: _.isPlainObject,
     defValue: () => ({}),
     defOptions: () => ({properties: []})
   },
-  array: {
+  [tnArray]: {
     checker: _.isArray,
     defValue: () => ([]),
     defOptions: () => ({items: []})
   },
-  boolean: {
+  [tnBoolean]: {
     checker: _.isBoolean,
     defValue: oldVal => !!oldVal
   },
-  null: {
+  [tnNull]: {
     checker: _.isNull,
     defValue: () => null
   }
 }
 
-export const typesNames = Object.keys(typesCheckers)
+export const typesNames = [tnNumber, tnString, tnObject, tnArray, tnBoolean, tnNull]
 
 function detectTypeName (value) {
-  return typesNames.find(tn => typesCheckers[tn].checker(value)) || 'string'
+  return typesNames.find(tn => typesCheckers[tn].checker(value)) || tnString
 }
 
 let num = 0
@@ -63,12 +70,12 @@ export function getEditorSchema (json) {
   const type = detectTypeName(json)
   let schema
   switch (type) {
-    case 'array':
+    case tnArray:
       schema = createSchemaItem(type, {
         items: json.map(item => getEditorSchema(item))
       })
       break
-    case 'object':
+    case tnObject:
       schema = createSchemaItem(type, {
         properties: _.map(json, (prop, key) => createObjectProp(key, getEditorSchema(prop)))
       })
@@ -93,9 +100,9 @@ export function getValueByPath (obj, path) {
 
 export function getSchemaByPath (schema, path) {
   for (const idx of path) {
-    if (schema.type === 'array') {
+    if (schema.type === tnArray) {
       schema = schema.items[idx]
-    } else if (schema.type === 'object') {
+    } else if (schema.type === tnObject) {
       schema = schema.properties[idx].prop
     }
   }

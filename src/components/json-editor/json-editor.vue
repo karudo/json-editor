@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="json-editor">
     <component :is="`json-editor-${schema.type}`"
                :path="[]"
                :schema-path="[]"
@@ -63,6 +63,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style src="./style.less"/>

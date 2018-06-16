@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div>
+  <div class="element object">
+    <div class="element d-flex">
       <slot name="name"></slot>
       <json-editor-props-menu :menu-items="objectMenuItems"/>
       { {{schema.properties.length}} }
@@ -12,7 +12,9 @@
                  :path="[...path, prop.key]"
                  :schema-path="[...schemaPath, idx]"
       >
-        <editable-span slot="name" :value="prop.key" @change="onChangeKey(idx, $event)"/>
+        <span class="prop-name" slot="name">
+          {{prop.key}}
+        </span>
       </component>
     </div>
   </div>
@@ -43,9 +45,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.children {
-  padding-left: 20px;
-}
-</style>

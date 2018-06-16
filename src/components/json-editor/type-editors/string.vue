@@ -1,5 +1,5 @@
 <template>
-  <div class="d-inline-flex align-items-start">
+  <div class="element string d-flex align-items-start">
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
     <b-input-group size="sm" :append="`${value.length}`">
@@ -14,9 +14,3 @@ export default {
   mixins: [EditorMixin]
 }
 </script>
-
-<style scoped>
-.value {
-  color: green;
-}
-</style>

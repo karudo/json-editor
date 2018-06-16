@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="element null d-flex align-items-center">
     <slot name="name"></slot>
     <json-editor-props-menu :menu-items="menuItems"/>
     null
