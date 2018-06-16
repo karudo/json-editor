@@ -1,7 +1,6 @@
 import {jsonEditorSymbol, vuexModuleName} from '../constants'
 import {typesCheckers, typesNames} from '../schema'
 import JsonEditorPropsMenu from '../json-editor-props-menu'
-import EditableSpan from '../editable-span'
 export default {
   props: {
     path: Array,
@@ -50,5 +49,5 @@ export default {
       }
     }
   },
-  components: {JsonEditorPropsMenu, EditableSpan}
+  components: {JsonEditorPropsMenu}
 }
